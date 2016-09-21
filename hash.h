@@ -1,3 +1,5 @@
+#ifndef HASHCELLH
+#define HASHCELLH
 #define HASH_SIZE 997
 
 #define SYMBOL_LIT_INT 1
@@ -14,4 +16,4 @@ typedef struct hashcell {
 //adds value to hash
 HASHCELL* addHash(char *key, int type);
 HASHCELL* getHash(char *key);
-  
+#endif
