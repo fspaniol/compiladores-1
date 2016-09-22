@@ -70,6 +70,6 @@ typedef struct treenode {
   struct treenode *child[4];
 }TREENODE; 
 
-TREENODE* addChild(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4);
+TREENODE* createNode(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4);
 void printTree(TREENODE *node);
 #endif

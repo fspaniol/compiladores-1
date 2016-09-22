@@ -5,7 +5,7 @@
 
 
 
-TREENODE* addChild(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4)
+TREENODE* createNode(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4)
 {
   TREENODE *node = calloc(sizeof(TREENODE),1);
   node->type = type;
