@@ -2,44 +2,41 @@
 #include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
-TREENODE root;
-int init = 0;
-void initTree()
-{
-  if (init == 1)
-    return;
-  root.type=0;
-  root.hash=NULL;
-  root.child[0] = NULL;
-  root.child[1] = NULL;
-  root.child[2] = NULL;
-  root.child[3] = NULL;
-  init = 1;
-}
 
-void initNode(TREENODE *node)
+
+
+TREENODE* addChild(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4)
 {
-  node->type=0;
-  node->hash=NULL;
-  node->child[0] = NULL;
-  node->child[1] = NULL;
-  node->child[2] = NULL;
-  node->child[3] = NULL;
-}
-int addChild(TREENODE *parent, int childPos, TREENODE *child)
-{
-  if(!init)
-    initTree();
-  if(parent->child[childPos]!=NULL) {
-    free(parent->child[childPos]);
-  }
-  parent->child[childPos] = child;
+  TREENODE *node = calloc(sizeof(TREENODE),1);
+  node->type = type;
+  node->symbol = symbol;
+  node->child[0] = child1;
+  node->child[1] = child2;
+  node->child[2] = child3;
+  node->child[3] = child4;
+  return node;
   
 }
 
-TREENODE* getChild(TREENODE *parent, int childPos)
+void printTree(TREENODE *node)
 {
-  if (!init)
-    initTree();
-  return(parent->child[childPos]);
+    int numChild = 0;
+    printf("(type id:%d",node->type);
+    if(node->symbol!=NULL)
+    {
+      printf(" value: %s", node->symbol->key);
+    }
+    while(node->child[numChild]!=NULL && numChild<4)
+      numChild++;
+    int cursor=0;
+    while(numChild>0)
+    { 
+      printf(", ");
+      printTree(node->child[cursor]);
+      numChild--;
+      cursor++;
+    }
+    printf(")");
+      
+      
 }

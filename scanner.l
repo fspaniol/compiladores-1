@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
+#include "tree.h"
 #include "y.tab.h"
-
 
 int running = 1;
 int lines = 0;
@@ -73,7 +73,6 @@ FALSE 				{return LIT_FALSE;}
 
 
 %%
-#include "main.c"
 
 int yywrap(){
 	running = 0;
@@ -88,6 +87,5 @@ int getLineNumber(void){
 	return lines;
 }
 void initMe(void) {
-    initHash();
 }
 

@@ -7,16 +7,23 @@
 # and #include "main.c" in the last part of the scanner.l
 #
 
-etapa2: lex.yy.c y.tab.o
-	gcc -o etapa2 lex.yy.c y.tab.c
+etapa2: lex.yy.c y.tab.o main.o hash.o tree.o
+	gcc -o etapa2 lex.yy.c y.tab.c main.o hash.o tree.o
 
-lex.yy.c: scanner.l hash.c hash.h
-	lex scanner.l
+lex.yy.c: scanner.l 
+	lex --header-file=lex.yy.h  scanner.l
 
 y.tab.o: y.tab.c
 	gcc -c y.tab.c $(CFLAGS)
 y.tab.c: parser.y
 	yacc -v -d parser.y
+
+main.o: main.c lex.yy.c
+	gcc -c main.c
+tree.o: tree.c
+	gcc -c tree.c
+hash.o: hash.c
+	gcc -c hash.c
 
 etapa2.tgz: clean
 	tar cvzf  ../etapa2.tgz . --exclude-vcs
