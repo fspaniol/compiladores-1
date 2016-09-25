@@ -5,12 +5,10 @@
 
 int main(int argc, char** argv){
         initMe();
-	FILE *file;
-	if(argc==2 && (file = fopen(argv[1], "r"))){
+	FILE *file, *out;
+	if((argc==3 && (file = fopen(argv[1], "r"))) && (argc == 3 && (out = fopen(argv[2], "w")))) {
 		yyin = file;
-		
-		
-	
+		definirOutput(out);
 		yyparse();
 		printf("Numero de linhas: %d \n",getLineNumber());	
 	}

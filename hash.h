@@ -16,4 +16,5 @@ typedef struct hashcell {
 //adds value to hash
 HASHCELL* addHash(char *key, int type);
 HASHCELL* getHash(char *key);
+int hashFunction(char *key);
 #endif

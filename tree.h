@@ -1,5 +1,6 @@
 #ifndef TREEH
 #define TREEH
+
 #include "hash.h"
 
 #define TREE_ADD 1
@@ -64,6 +65,7 @@
 #define TREE_EXP_FUNC_CALL 52
 #define TREE_EXP_FUNC_CALL_ARG_LIST_HEAD 53
 #define TREE_EXP_FUNC_CALL_ARG_LIST_TAIL 54
+
 typedef struct treenode {
   int type;
   HASHCELL *symbol;
@@ -72,4 +74,5 @@ typedef struct treenode {
 
 TREENODE* createNode(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *child2,TREENODE *child3,TREENODE *child4);
 void printTree(TREENODE *node);
+void print_code(FILE *outFile,TREENODE *node);
 #endif

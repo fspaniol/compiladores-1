@@ -1,8 +1,8 @@
 
-#include "hash.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "hash.h"
 
 int inited=0;
 HASHCELL* table[HASH_SIZE];

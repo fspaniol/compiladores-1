@@ -7,6 +7,8 @@
         int getLineNumber();
         int yyerror();
         int yylex();
+
+    FILE *output = NULL;
 %}
 
 %type<node> program
@@ -16,7 +18,6 @@
 %type<node> params_non_empty
 %type<node> init_literal_list
 %type<node> init_literal
-%type<node> declaration
 %type<node> cmd
 %type<node> print_list
 %type<node> cmdlist
@@ -72,7 +73,7 @@
 
 %%
 rootnode
-    : program {$$ = $1; printTree($1);}
+    : program {$$ = $1; if(output != NULL)print_code(output, $1);}
     ;
 program
     : declaration ';' program {$$ = createNode(TREE_DECLARATION, NULL, $1, $3, NULL, NULL);}
@@ -156,7 +157,7 @@ operator
     | OPERATOR_NE  	{ $$ = createNode(TREE_NE, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_L 	{ $$ = createNode(TREE_L, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_G	{ $$ = createNode(TREE_G, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_AND  	{ $$ = createNode(TREE_AND, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_AND  { $$ = createNode(TREE_AND, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_OR  	{ $$ = createNode(TREE_OR, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_MUL	{ $$ = createNode(TREE_MUL, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_DIV	{ $$ = createNode(TREE_DIV, NULL, NULL, NULL,NULL, NULL);}
@@ -184,6 +185,9 @@ argument_list_non_empty
     ;
 %%
 
+void definirOutput(FILE *o){
+    output = o;
+}
 int yyerror (const char *s) {
     fflush(stderr);
     fprintf(stderr,"ERROR: %s ---> Line: %d\n", s, getLineNumber()+1);
