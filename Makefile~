@@ -25,8 +25,8 @@ tree.o: tree.c
 hash.o: hash.c
 	gcc -c hash.c
 
-tgz: clean
-	tar cvzf  ../etapa3.tgz . --exclude-vcs
+etapa2.tgz: clean
+	tar cvzf  ../etapa2.tgz . --exclude-vcs
 
 clean:
-	@rm *.yy.c etapa3 y.*.* y.* || true
+	@rm *.yy.c etapa2 y.*.* y.* || true

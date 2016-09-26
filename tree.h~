@@ -52,7 +52,6 @@
 #define TREE_CMD_IF_ELSE 42
 #define TREE_CMD_FOR 43
 #define TREE_CMD_FOR_TO 44
-#define TREE_CMD_EMPTY 55
 
 //variable declarations<
 #define TREE_DEC_VAR_VEC_LIT_LIST_HEAD 45

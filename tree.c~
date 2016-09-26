@@ -39,9 +39,6 @@ void printTree(TREENODE *node)
       
 }
 
-/* COlocar ; apenas nas variáveis globais e nas declarações de funções e também
-dentro dos cmd_block */
-
 void print_code(FILE *outFile,TREENODE *node){
   TREENODE *tmp;
   tmp = node;
@@ -60,28 +57,13 @@ void print_code(FILE *outFile,TREENODE *node){
       print_code(outFile, tmp->child[1]);
       fprintf(outFile, " : ");
       print_code(outFile, tmp->child[2]);
-      fprintf(outFile, ";\n");
+      fprintf(outFile, "; \n");
       break;
 
-
+    case TREE_IDENTIFIER:
     case TREE_INTEGER:
-    	fprintf(outFile, "%s", tmp->symbol->key);
-    	break;
     case TREE_CHAR:
-      fprintf(outFile, "%s",tmp->symbol->key);
-      break;
-
-	case TREE_IDENTIFIER:
-    case TREE_STRING:
-      fprintf(outFile, "%s",tmp->symbol->key);
-      break;
-
-    case TREE_CMD_ATTR_VAR_VEC:
-      print_code(outFile, tmp->child[0]);
-      fprintf(outFile, "[");
-      print_code(outFile, tmp->child[1]);
-      fprintf(outFile, "] =");
-      print_code(outFile, tmp->child[2]);
+      fprintf(outFile, tmp->symbol->key);
       break;
 
     case TREE_DECLARATION_VEC_LIT:
@@ -113,7 +95,6 @@ void print_code(FILE *outFile,TREENODE *node){
       print_code(outFile, tmp->child[2]);
       fprintf(outFile, ")");
       print_code(outFile, tmp->child[3]);
-      fprintf(outFile, ";");
       break;
 
     case TREE_DEC_FUC_PARAM_HEAD:
@@ -138,7 +119,7 @@ void print_code(FILE *outFile,TREENODE *node){
     case TREE_CMD_LIST_HEAD:
       print_code(outFile, tmp->child[0]);
       fprintf(outFile, ";");
-      print_code(outFile, tmp->child[1]);
+      print_code(outFile, tmp->child[0]);
       break;
 
     case TREE_CMD_LIST_TAIL:
@@ -147,88 +128,18 @@ void print_code(FILE *outFile,TREENODE *node){
       break;
 
     //AGORA COMEÇA OS COMMANDS DE VERDADE UHU /o/
-      case TREE_CMD_READ:
-        fprintf(outFile, "read ");
-        print_code(outFile, tmp->child[0]);
-        break;
-
-      case TREE_CMD_PRINT:
-        fprintf(outFile, "print ");
-        print_code(outFile, tmp->child[0]);
-        break;
-
-      case TREE_CMD_PRINT_LIST_HEAD:
-        print_code(outFile, tmp->child[0]);
-        fprintf(outFile," ");
-        print_code(outFile, tmp->child[1]);
-        break;
-
-      case TREE_CMD_PRINT_LIST_TAIL:
-        print_code(outFile, tmp->child[0]);
-        fprintf(outFile,";\n");
-        break;
-
-      case TREE_CMD_RETURN:
-        fprintf(outFile, "return ");
-        print_code(outFile, tmp->child[0]);
-        break;
-
 
     case TREE_CMD_FOR_TO:
       fprintf(outFile, "for (");
         print_code(outFile, tmp->child[0]);
-        fprintf(outFile, " = ");
+        fprintf(outFile, " ");
         print_code(outFile, tmp->child[1]);
-        fprintf(outFile, " to ");
+        fprintf(outFile, " ");
         print_code(outFile, tmp->child[2]);
-        fprintf(outFile, ")\n");
+        fprintf(outFile, " ");
         print_code(outFile, tmp->child[3]);
+        fprintf(outFile, ")");
         break;
-
-    case TREE_CMD_ATTR_VAR_SCALAR:
-      print_code(outFile, tmp->child[0]);
-        fprintf(outFile, " = ");
-        print_code(outFile, tmp->child[1]);
-        break;
-    case TREE_CMD_FOR:
-      fprintf(outFile, "for (");
-       print_code(outFile, tmp->child[0]);
-       fprintf(outFile, ")");
-       print_code(outFile, tmp->child[1]);
-       break;
-
-    case TREE_EXP_VEC_INDEX:
-      print_code(outFile, tmp->child[0]);
-       fprintf(outFile, "[");
-       print_code(outFile, tmp->child[1]);
-       fprintf(outFile, "]");
-       break;
-
-    case TREE_EXP_OP_BINARY:
-      print_code(outFile, tmp->child[0]);
-       fprintf(outFile, " ");
-       print_code(outFile, tmp->child[1]);
-       fprintf(outFile, " ");
-       print_code(outFile, tmp->child[2]);
-       break;
-        
-
-    case TREE_EXP_FUNC_CALL:
-      print_code(outFile, tmp->child[0]);
-      fprintf(outFile, "(");
-      print_code(outFile, tmp->child[1]);
-      fprintf(outFile, ");\n");
-      break;
-
-    case TREE_EXP_FUNC_CALL_ARG_LIST_TAIL:
-      print_code(outFile, tmp->child[0]);
-      break;
-
-    case TREE_EXP_FUNC_CALL_ARG_LIST_HEAD:
-      print_code(outFile, tmp->child[0]);
-      fprintf(outFile, ", ");
-      print_code(outFile, tmp->child[1]);
-      break;
 
     case TREE_KW_INTEGER:  
       fprintf(outFile, "int");
@@ -248,18 +159,18 @@ void print_code(FILE *outFile,TREENODE *node){
 
 
      case TREE_CMD_IF: 
-       fprintf (outFile, "\nif (");
+       fprintf (outFile, "if (");
        print_code(outFile, tmp->child[0]); 
-       fprintf (outFile, ") then\n");
+       fprintf (outFile, ")\n");
        print_code(outFile, tmp->child[1]); 
        break;
 
-    case TREE_CMD_IF_ELSE:
-      fprintf (outFile, "\nif (");
+     case TREE_CMD_IF_ELSE: 
+       fprintf (outFile, "if (");
        print_code(outFile, tmp->child[0]); 
-       fprintf (outFile, ") then\n");
+       fprintf (outFile, ")\n");
        print_code(outFile, tmp->child[1]); 
-       fprintf(outFile, "else");
+       fprintf (outFile, " else\n");
        print_code(outFile, tmp->child[2]); 
        break;
 
@@ -334,9 +245,6 @@ void print_code(FILE *outFile,TREENODE *node){
       fprintf (outFile, " > ");
       print_code(outFile, tmp->child[1]); 
       break;
-      
-    case TREE_CMD_EMPTY:
-    	break;
 
     default:
       break;
