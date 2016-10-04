@@ -12,6 +12,9 @@ int main(int argc, char** argv){
 		yyparse();
 		printf("Numero de linhas: %d \n",getLineNumber());	
 	}
-	else
-		printf("ERRO NO ABRIMENTO DO ARQUIVO!");
+	else {
+		printf("Erro na abertura do arquivo!");
+		exit(-1);
+	}
+	exit(0);
 }

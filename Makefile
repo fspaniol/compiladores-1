@@ -8,7 +8,7 @@
 #
 
 etapa2: lex.yy.c y.tab.o main.o hash.o tree.o
-	gcc -o etapa2 lex.yy.c y.tab.c main.o hash.o tree.o
+	gcc -o etapa3 lex.yy.c y.tab.c main.o hash.o tree.o
 
 lex.yy.c: scanner.l 
 	lex --header-file=lex.yy.h  scanner.l
@@ -29,4 +29,4 @@ tgz: clean
 	tar cvzf  ../etapa3.tgz . --exclude-vcs
 
 clean:
-	@rm *.yy.c etapa3 y.*.* y.* || true
+	@rm *.yy.* etapa3 y.*.* y.* *.o || true
