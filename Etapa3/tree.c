@@ -94,6 +94,15 @@ void print_code(FILE *outFile,TREENODE *node){
       print_code(outFile, tmp->child[3]);
       fprintf(outFile,";\n");
       break;
+      
+    case TREE_DECLARATION_VEC_NOLIT:
+      print_code(outFile, tmp->child[0]);
+      fprintf(outFile, " ");
+      print_code(outFile, tmp->child[1]);
+      fprintf(outFile, " [");
+      print_code(outFile, tmp->child[2]);
+      fprintf(outFile, "];\n");
+      break;
 
     case TREE_DEC_VAR_VEC_LIT_LIST_HEAD:
       print_code(outFile, tmp->child[0]);
@@ -132,7 +141,7 @@ void print_code(FILE *outFile,TREENODE *node){
     case TREE_CMD_BLOCK:
       fprintf(outFile, "{ \n");
       print_code(outFile, tmp->child[0]);
-      fprintf(outFile, "}\n");
+      fprintf(outFile, "}");
       break;
 
     case TREE_CMD_LIST_HEAD:
@@ -146,7 +155,6 @@ void print_code(FILE *outFile,TREENODE *node){
       fprintf(outFile, ";");
       break;
 
-    //AGORA COMEÇA OS COMMANDS DE VERDADE UHU /o/
       case TREE_CMD_READ:
         fprintf(outFile, "read ");
         print_code(outFile, tmp->child[0]);
@@ -195,6 +203,12 @@ void print_code(FILE *outFile,TREENODE *node){
        print_code(outFile, tmp->child[0]);
        fprintf(outFile, ")");
        print_code(outFile, tmp->child[1]);
+       break;
+    
+    case TREE_EXP_BRACKET_ENCLOSURE:
+      fprintf(outFile, "(");
+       print_code(outFile, tmp->child[0]);
+       fprintf(outFile, ")");
        break;
 
     case TREE_EXP_VEC_INDEX:
@@ -264,80 +278,84 @@ void print_code(FILE *outFile,TREENODE *node){
        break;
 
     case TREE_ADD: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " + ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_SUB: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " - ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_MUL: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " * ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_DIV: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " / ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_LE: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " <= ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_GE: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " >= ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_EQ: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " == ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_NE: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " != ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_AND: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " && ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_OR: 
-      print_code(outFile, tmp->child[0]); 
+      //print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " || ");
-      print_code(outFile, tmp->child[1]); 
+      //print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_L: 
-      print_code(outFile, tmp->child[0]); 
+//       print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " < ");
-      print_code(outFile, tmp->child[1]); 
+//       print_code(outFile, tmp->child[1]); 
       break;
 
     case TREE_G: 
-      print_code(outFile, tmp->child[0]); 
+//       print_code(outFile, tmp->child[0]); 
       fprintf (outFile, " > ");
-      print_code(outFile, tmp->child[1]); 
+//       print_code(outFile, tmp->child[1]); 
       break;
       
     case TREE_CMD_EMPTY:
     	break;
 
     default:
+      fprintf(outFile,"\n");
+      if(tmp->symbol != NULL)
+	printf("erro : %s \n",tmp->symbol->key);
+      exit(0);
       break;
   }}}

@@ -70,6 +70,19 @@
 	TREENODE* node;
 }
 
+%left OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_L OPERATOR_G
+%left OPERATOR_AND OPERATOR_OR  
+%left OPERATOR_MUL OPERATOR_DIV
+%left OPERATOR_SUB OPERATOR_ADD
+%right OPERATOR_EQ
+
+%nonassoc IF_SIMPLE
+%nonassoc KW_ELSE
+
+%left '('
+%left '['
+
+%nonassoc EXPRESSION
 
 %%
 rootnode
@@ -130,7 +143,7 @@ cmd
     | identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
     | KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
     | KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd { $$ = createNode(TREE_CMD_IF_ELSE, NULL, $3, $6, $8, NULL);}
-    | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, NULL, NULL, NULL);}
+    | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
     | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);}
     | { $$ = NULL;}
     ; 
@@ -170,7 +183,7 @@ exp
     | identifier '[' exp ']' { $$ = createNode(TREE_EXP_VEC_INDEX, NULL, $1, $3,NULL, NULL);}
     | integer {$$ = $1;}
     | LIT_CHAR    { $$ = createNode(TREE_CHAR, $1, NULL, NULL,NULL, NULL);}
-    | exp operator exp { $$ = createNode(TREE_EXP_OP_BINARY, NULL, $1, $2, $3, NULL);}
+    | exp operator exp { $$ = createNode(TREE_EXP_OP_BINARY, NULL, $1, $2, $3, NULL);} %prec EXPRESSION
     | '('exp')' { $$ = createNode(TREE_EXP_BRACKET_ENCLOSURE, NULL, $2,NULL, NULL, NULL);}
     | identifier '(' argument_list ')'  { $$ = createNode(TREE_EXP_FUNC_CALL, NULL, $1,$3, NULL, NULL);}
     ;
