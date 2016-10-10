@@ -127,7 +127,7 @@ cmd
     | KW_RETURN exp	{ $$ = createNode(TREE_CMD_RETURN, NULL, $2, NULL,NULL, NULL);}
     | cmdblock		{ $$ = $1;}
     | identifier OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_SCALAR, NULL, $1, $3,NULL, NULL);}
-    | identifier '[' integer ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
+    | identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
     | KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
     | KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd { $$ = createNode(TREE_CMD_IF_ELSE, NULL, $3, $6, $8, NULL);}
     | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, NULL, NULL, NULL);}
@@ -167,7 +167,7 @@ operator
     
 exp
     : identifier {$$ = $1;}
-    | identifier '[' integer ']' { $$ = createNode(TREE_EXP_VEC_INDEX, NULL, $1, $3,NULL, NULL);}
+    | identifier '[' exp ']' { $$ = createNode(TREE_EXP_VEC_INDEX, NULL, $1, $3,NULL, NULL);}
     | integer {$$ = $1;}
     | LIT_CHAR    { $$ = createNode(TREE_CHAR, $1, NULL, NULL,NULL, NULL);}
     | exp operator exp { $$ = createNode(TREE_EXP_OP_BINARY, NULL, $1, $2, $3, NULL);}
