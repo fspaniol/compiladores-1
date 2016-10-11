@@ -357,6 +357,6 @@ void print_code(FILE *outFile,TREENODE *node){
       fprintf(outFile,"\n");
       if(tmp->symbol != NULL)
 	printf("erro : %s \n",tmp->symbol->key);
-      exit(0);
+      exit(3);
       break;
   }}}

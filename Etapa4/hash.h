@@ -2,6 +2,10 @@
 #define HASHCELLH
 #define HASH_SIZE 997
 
+#define SYMBOL_SCALAR 9
+#define SYMBOL_VECTOR 10
+#define SYMBOL_FUNCTION 11
+
 #define SYMBOL_LIT_INT 1
 #define SYMBOL_LIT_FLOAT 2 
 #define SYMBOL_LIT_CHAR 3
@@ -15,6 +19,7 @@ typedef struct hashcell {
   char* key;
   int type;
   int initialized;
+  int lineNumber;
   struct hashcell *next;
 }HASHCELL;
 
