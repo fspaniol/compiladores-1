@@ -53,7 +53,7 @@ FALSE 				{return LIT_FALSE;}
 
 
 
-[A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = addHash(yytext, SYMBOL_LIT_IDENTIFIER);return TK_IDENTIFIER;}
+[A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = addHash(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
 [0-9]*				{yylval.symbol = addHash(yytext, SYMBOL_LIT_INT);return LIT_INTEGER;}
 \'.\'				{yylval.symbol = addHash(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;} 
 [,;:\(\)\[\]\{\}+\-*/<>=!&$]   	{return yytext[0];}	
