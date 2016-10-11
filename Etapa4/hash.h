@@ -14,10 +14,10 @@
 #define SYMBOL_IDENTIFIER_SCALAR 6
 #define SYMBOL_IDENTIFIER_VECTOR 7 
 #define SYMBOL_IDENTIFIER_FUNCTION 8
-#define DATATYPE_INT
-#define DATATYPE_FLOAT
-#define DATATYPE_CHAR
-#define DATATYPE_BOOL
+#define DATATYPE_INT 9
+#define DATATYPE_FLOAT 10
+#define DATATYPE_CHAR 11
+#define DATATYPE_BOOL 12
 
 typedef struct hashcell {
   char* key;
