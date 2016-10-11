@@ -52,6 +52,7 @@ HASHCELL* addHash(char *key, int type) {
 
   HASHCELL *cell = (HASHCELL*) calloc(sizeof(HASHCELL), 1);
   cell->type = type;
+  cell->datatype = NULL;
   cell->next = NULL;
   char *keycpy = calloc(strlen(key)+1,1);
   strncpy(keycpy, key, strlen(key));
