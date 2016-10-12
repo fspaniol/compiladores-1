@@ -52,7 +52,7 @@ int checkDataTypes (int firstType, int secType){
 int checkExpType(TREENODE *exp){
 	switch(exp->type){
 		  	case TREE_EXP_OP_BINARY:
-  				return checkExpType()
+  				return checkExpType(); //não sei tô confusa...
 	}
 }
 
