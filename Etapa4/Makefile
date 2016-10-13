@@ -8,7 +8,7 @@
 #
 
 etapa: lex.yy.c y.tab.o main.o hash.o tree.o semantic.o
-	gcc -o etapa3 lex.yy.c y.tab.c main.o hash.o tree.o
+	gcc -g -rdynamic -o etapa4 lex.yy.c y.tab.c main.o hash.o tree.o semantic.o
 
 lex.yy.c: scanner.l 
 	lex --header-file=lex.yy.h  scanner.l
@@ -19,13 +19,13 @@ y.tab.c: parser.y
 	yacc -v -d parser.y
 
 main.o: main.c lex.yy.c
-	gcc -c main.c
+	gcc -g -c main.c
 tree.o: tree.c
-	gcc -c tree.c
+	gcc -g -c tree.c
 hash.o: hash.c
-	gcc -c hash.c
+	gcc -g -c hash.c
 semantic.o: semantic.c
-	gcc -c semantic.c
+	gcc -g -c semantic.c
 tgz: clean
 	tar cvzf  ../etapa4.tgz . --exclude-vcs
 

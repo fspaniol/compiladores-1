@@ -67,6 +67,8 @@
 #define TREE_EXP_FUNC_CALL_ARG_LIST_HEAD 53
 #define TREE_EXP_FUNC_CALL_ARG_LIST_TAIL 54
 
+#define TREE_ROOT 55
+
 typedef struct treenode {
   int type;
   HASHCELL *symbol;

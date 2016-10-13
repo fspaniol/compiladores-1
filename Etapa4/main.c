@@ -3,6 +3,8 @@
 #include "tree.h"
 #include "lex.yy.h"
 
+
+
 int main(int argc, char** argv){
         initMe();
 	FILE *file, *out;

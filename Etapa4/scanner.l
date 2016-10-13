@@ -4,6 +4,7 @@
 #include <string.h>
 #include "hash.h"
 #include "tree.h"
+#include "semantic.h"
 #include "y.tab.h"
 
 int running = 1;
@@ -13,6 +14,7 @@ int isRunning(void);
 int getLineNumber(void);
 void initMe(void);
 int yyerror();
+
 %}
 
 
@@ -46,20 +48,20 @@ FALSE 				{return LIT_FALSE;}
 ">"				{return OPERATOR_G;}
 "<="				{return OPERATOR_LE;}
 ">="				{return OPERATOR_GE;}
-"=="				{return OPERATOR_EQ;}	
+"=="				{return OPERATOR_EQ;}
 "!="				{return OPERATOR_NE;}
 "&&"				{return OPERATOR_AND;}
-"||"				{return OPERATOR_OR;}					
+"||"				{return OPERATOR_OR;}
 
 
 
 [A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = addHash(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
 [0-9]*				{yylval.symbol = addHash(yytext, SYMBOL_LIT_INT);return LIT_INTEGER;}
-\'.\'				{yylval.symbol = addHash(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;} 
-[,;:\(\)\[\]\{\}+\-*/<>=!&$]   	{return yytext[0];}	
-[ \t\f\v]				
+\'.\'				{yylval.symbol = addHash(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;}
+[,;:\(\)\[\]\{\}+\-*/<>=!&$]   	{return yytext[0];}
+[ \t\f\v]
 \n 				{lines++;}
-"//".*				
+"//".*
 "/*"				{BEGIN(COMENTARIO);}
 
 \"([^\"\n\\]|\\.)*\"      { yylval.symbol = addHash(yytext, LIT_STRING); return LIT_STRING;}
@@ -67,8 +69,8 @@ FALSE 				{return LIT_FALSE;}
 .				{return TOKEN_ERROR;}
 
 <COMENTARIO>"*/"	{BEGIN(INITIAL);}
-<COMENTARIO>\n 		{lines++;} 
-<COMENTARIO>.*	
+<COMENTARIO>\n 		{lines++;}
+<COMENTARIO>.*
 
 
 
@@ -88,4 +90,3 @@ int getLineNumber(void){
 }
 void initMe(void) {
 }
-
