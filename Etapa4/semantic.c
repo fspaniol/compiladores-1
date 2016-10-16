@@ -9,12 +9,6 @@ int semanticAnalyser(TREENODE *root) {
     int i;
     setTypes(root);
 
-    printf("\n\n\n\n\n\n");
-    //printTree(root);
-
-
-    checkAllVariables(root);
-
   return 1;
 
 }
@@ -63,20 +57,6 @@ int checkDataTypes (int firstType, int secType) {
     return -1;
 }
 
-void checkAllVariables(TREENODE *node)
-{
-    int numChild = 0;
-    while(node->child[numChild]!=NULL && numChild<4)
-      numChild++;
-    int cursor=0;
-    while(numChild>0) { 
-      checkAllVariables(node->child[cursor]);
-      numChild--;
-      cursor++;
-    } 
-    checkIfVariableDeclared(node);
-}
-
 
 void checkIfVariableDeclared(TREENODE *node) {
     if(node == NULL) return;
@@ -108,7 +88,7 @@ int verifyParams(TREENODE* node, TREENODE* function){
         // Se são os dois void, está certo
         if(decList == NULL && callList==NULL) return 1;
         if(decList == NULL || callList==NULL) return -1; // quantidade de variaveis diferente
-        if(decList->type != callList ->type) return -1; //Pode ser head ou tail
+        if(decList->type != callList->type) return -1; //Pode ser head ou tail
 
         // Testa os parâmetros um a um
         while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_DEC_FUC_PARAM_HEAD){
@@ -170,36 +150,88 @@ int getExpDataType(TREENODE *node) {
         }
         //check if index is an expression
         int datatype = getExpDataType(node->child[1]);
-        if(datatype != DATATYPE_INT ) {
+        if(datatype != DATATYPE_INT) {
             //not an expression
             printf("Error. vector has to be indexed by integer. Line %d\n", node->linenumber);
             exit(4);
         }
         return(node->symbol->datatype);
 
-    }
-    return -1;
+    } 
 
+    
+    else if ((node->type == TREE_EXP_OP_BINARY) && (node->child[1] != NULL)) {
+        
+        switch(node->child[1]->type){
+            case TREE_ADD:
+            case TREE_SUB:
+            case TREE_DIV: 
+            case TREE_MUL:
+                if (checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2])) == 0 )
+                    return getExpDataType(node->child[0]);
+                else if (checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2])) > 0)
+                    return checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2]));
+            case TREE_LE:
+            case TREE_GE:
+            case TREE_EQ:
+            case TREE_NE:
+            case TREE_AND: 
+            case TREE_OR:
+            case TREE_L:
+            case TREE_G:
+                return DATATYPE_BOOL;
+        } 
+        
+    } 
+    return -1;
+} 
+
+    /*: KW_READ identifier { $$ = createNode(TREE_CMD_READ, NULL, $2, NULL,NULL, NULL);}
+    | KW_PRINT print_list { $$ = createNode(TREE_CMD_PRINT, NULL, $2, NULL,NULL, NULL);}
+    | cmdblock      { $$ = $1;}
+    | identifier OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_SCALAR, NULL, $1, $3,NULL, NULL);}
+    | identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
+    | KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
+    | KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd { $$ = createNode(TREE_CMD_IF_ELSE, NULL, $3, $6, $8, NULL);}
+    | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
+    | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
+
+// retorna 1 se tudo certo, incluindo o retorno da função
+int checkCommandlist(TREENODE *cmdList, int funcType){
+    if (cmdList == NULL) return 1;
+    
+    checkCommandlist(cmdList->child[0], funcType);
+    checkCommandlist(cmdList->child[1], funcType);
+    checkCommandlist(cmdList->child[2], funcType);
+    checkCommandlist(cmdList->child[3], funcType);
+
+    TREENODE* cmd = cmdList;
+
+    //Testa se o retorno é válido
+    if(cmd->type == TREE_CMD_RETURN){
+        int returnType = checkDataTypes(getExpDataType(cmd->child[0]), funcType);
+        if(returnType < 0){
+            printf("ERRO: Retorno da função na linha %d é inválido.\n", cmd->linenumber);
+            exit(4);
+        }
+    }
+    return 1;
 
 }
 
 
 
 void setTypes(TREENODE *node) {
-    int i;
-    if(node == NULL)
-      printf("node is null\n");
-    printf("node type = %d\n", node->type);
+    if(node == NULL) return;
   
-    for(i = 0; i < 4; i++)
-      if(node->type == TREE_DECLARATION)
-    if(node->child[i] != NULL)
-      setTypes(node->child[i]);
+    setTypes(node->child[0]);
+    setTypes(node->child[1]);
+    setTypes(node->child[2]);
+    setTypes(node->child[3]);
     
 
     //check scalar declarations
     if(node->type == TREE_DECLARATION_SCALAR) {
-      printf("startsca\n");
     //first child of TREE_DECLARATION_SCALAR is datatype, second is identifier
     //checks if identifies has already been declared
         if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
@@ -226,13 +258,11 @@ void setTypes(TREENODE *node) {
       printf("Error incompatible types on line %d\n", node->linenumber);
       
     }
-        printf("endsca\n");
     }
     //check vector declarations
     if((node->type == TREE_DECLARATION_VEC_LIT) || (node->type == TREE_DECLARATION_VEC_NOLIT)) {
-      printf("startvec\n");
         if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
-            printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
+            printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d\n", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
             exit(4);
         }
         else {
@@ -250,14 +280,12 @@ void setTypes(TREENODE *node) {
             else if (node->child[0]->type == TREE_KW_BOOL)
                 node->child[1]->symbol->datatype = DATATYPE_BOOL;
         }
-        printf("endvec\n");
     }
     //check function declarations
     if(node->type == TREE_DECLARATION_FUC) {
 
-    printf("startfuc\n");
         if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
-            printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
+            printf("ERRO SEMÂNTICO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d\n", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
             exit(4);
         }
         else {
@@ -271,8 +299,12 @@ void setTypes(TREENODE *node) {
                 node->child[1]->symbol->datatype = DATATYPE_FLOAT;
             else if (node->child[0]->type == TREE_KW_BOOL)
                 node->child[1]->symbol->datatype = DATATYPE_BOOL;
+
+            checkCommandlist(node->child[3], node->child[1]->symbol->datatype);
         }
-        printf("endfuc\n");
     }
 
+
 }
+
+
