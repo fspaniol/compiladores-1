@@ -29,6 +29,7 @@
 #define TREE_CHAR 22
 #define TREE_STRING 23
 #define TREE_IDENTIFIER 14
+#define TREE_FLOAT 56
 //declarations
 #define TREE_DECLARATION 24
 #define TREE_DECLARATION_SCALAR 25

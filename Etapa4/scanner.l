@@ -8,7 +8,7 @@
 #include "y.tab.h"
 
 int running = 1;
-int lines = 0;
+int lines = 1;
 
 int isRunning(void);
 int getLineNumber(void);

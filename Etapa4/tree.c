@@ -22,6 +22,7 @@ void printTree(TREENODE *node)
 {
     int numChild = 0;
     printf("(type id:%d",node->type);
+    
     if(node->symbol!=NULL)
     {
       printf(" value: %s", node->symbol->key);
@@ -31,7 +32,7 @@ void printTree(TREENODE *node)
     int cursor=0;
     while(numChild>0)
     { 
-      printf(", ");
+      printf(",");
       printTree(node->child[cursor]);
       numChild--;
       cursor++;

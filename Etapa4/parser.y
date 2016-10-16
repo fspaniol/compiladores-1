@@ -197,6 +197,6 @@ argument_list_non_empty
 %%
 int yyerror (const char *s) {
     fflush(stderr);
-    fprintf(stderr,"ERROR: %s ---> Line: %d\n", s, getLineNumber()+1);
+    fprintf(stderr,"ERROR: %s ---> Line: %d\n", s, getLineNumber());
     exit(3);
 }
