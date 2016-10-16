@@ -77,7 +77,7 @@ int getLiteralType(TREENODE *node) {
     return(DATATYPE_BOOL);
   printf("Unknown literal datatype: node type: %d\n", node->type);
   exit(4);
-  
+
 }
 
 int verifyParams(TREENODE* node, TREENODE* function){
@@ -158,7 +158,6 @@ int getExpDataType(TREENODE *node) {
         return(node->symbol->datatype);
 
     } 
-
     
     else if ((node->type == TREE_EXP_OP_BINARY) && (node->child[1] != NULL)) {
         
@@ -199,11 +198,7 @@ int getExpDataType(TREENODE *node) {
 // retorna 1 se tudo certo, incluindo o retorno da função
 int checkCommandlist(TREENODE *cmdList, int funcType){
     if (cmdList == NULL) return 1;
-    
-    checkCommandlist(cmdList->child[0], funcType);
-    checkCommandlist(cmdList->child[1], funcType);
-    checkCommandlist(cmdList->child[2], funcType);
-    checkCommandlist(cmdList->child[3], funcType);
+
 
     TREENODE* cmd = cmdList;
 
@@ -215,6 +210,17 @@ int checkCommandlist(TREENODE *cmdList, int funcType){
             exit(4);
         }
     }
+
+    // Atribuições de escalares
+    /*if (cmd->type == TREE_CMD_ATTR_VAR_SCALAR){
+        setTypes(cmd->child[0]);
+        if(checkDataTypes(cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1])) == -1){
+            printf("Atr errada: %d,  %d\n", cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1]));
+            printf("ERRO: Atribuição com tipos de dados incompatíveis na linha %d", cmd->linenumber);
+            exit(4);
+        }
+    } */
+
     return 1;
 
 }
@@ -222,13 +228,13 @@ int checkCommandlist(TREENODE *cmdList, int funcType){
 
 
 void setTypes(TREENODE *node) {
+    int i;
     if(node == NULL) return;
-  
-    setTypes(node->child[0]);
-    setTypes(node->child[1]);
-    setTypes(node->child[2]);
-    setTypes(node->child[3]);
-    
+
+     for(i = 0; i < 4; i++)
+       if(node->type == TREE_DECLARATION)
+     if(node->child[i] != NULL)
+       setTypes(node->child[i]);
 
     //check scalar declarations
     if(node->type == TREE_DECLARATION_SCALAR) {
@@ -303,6 +309,7 @@ void setTypes(TREENODE *node) {
             checkCommandlist(node->child[3], node->child[1]->symbol->datatype);
         }
     }
+
 
 
 }

@@ -6,22 +6,24 @@ int b:0;
 int c:5;
 int d:10;
 float v[676]: 0 0 0 0 0 0 0 0 0 0; 
-bool mat[1000];
+bool mat[2] : TRUE FALSE;
+float exp:10;
+
 
 int ab (int a, int bX){
-  return a + bX;
+  return a < bX;
 };
 
 int main()
   {
   for (i = 1 to 10)
     print i " ";
-    v = 10;
-    b = ab(a,b);
+
+    bd = 10;
 
   print " Digite um numero: \n";
 
-
+  c = a < b;
   read i;
   v[a*(b+c)] = 3;
   for (i<10)
@@ -40,9 +42,8 @@ int main()
   {;} ; 
   };
 
-
 int incn (int x, float n) {
-  return x + n;
+  return x < n;
   };
 
 int voidfunc() {;};
