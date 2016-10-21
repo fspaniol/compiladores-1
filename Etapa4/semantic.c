@@ -195,49 +195,86 @@ int getExpDataType(TREENODE *node) {
     | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
     | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
 
-
-
-
 // retorna 1 se tudo certo, incluindo o retorno da função
 int checkCommand(TREENODE *node, int funcType){
-    if (node == NULL) return 1;
-    TREENODE *listHead;
-    //unwraps command block
-    if (node->type == TREE_CMD_BLOCK) {
-      listHead = node->child[0];
-      checkCommand(listHead, funcType);
-    }
-
-    //unwraps list
-    if(node->type == TREE_CMD_LIST_HEAD || node->type == TREE_CMD_LIST_HEAD) {
-      if(checkCommand(listHead->child[0], funcType) != 1)
-	return -1;
-      if(node->child[1] != NULL)
-	checkCommand(node->child[1], funcType);
-    }
+  int expDataType;
+  //test empty command
+  if (node == NULL) return 1;
     
-    
-    TREENODE* cmd = cmdList;
-    //tests if return type is correct
-    if(cmd->type == TREE_CMD_RETURN){
-        int returnType = checkDataTypes(getExpDataType(cmd->child[0]), funcType);
-        if(returnType < 0){
-            printf("ERRO: Retorno da função na linha %d é inválido.\n", cmd->linenumber);
-            exit(4);
-        }
-    }
+  TREENODE *listHead;
+  //unwraps command block
+  if (node->type == TREE_CMD_BLOCK) {
+    listHead = node->child[0];
+    checkCommand(listHead, funcType);
+  }
 
-    // Atribuições de escalares
-    /*if (cmd->type == TREE_CMD_ATTR_VAR_SCALAR){
-        setTypes(cmd->child[0]);
-        if(checkDataTypes(cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1])) == -1){
-            printf("Atr errada: %d,  %d\n", cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1]));
-            printf("ERRO: Atribuição com tipos de dados incompatíveis na linha %d", cmd->linenumber);
-            exit(4);
+  //unwraps list
+  if(node->type == TREE_CMD_LIST_HEAD || node->type == TREE_CMD_LIST_TAIL) {
+    if(checkCommand(listHead->child[0], funcType) != 1)
+      return -1;
+    if(node->child[1] != NULL)
+      checkCommand(node->child[1], funcType);
+  }
+
+  //print command
+  if(node->type == TREE_CMD_PRINT) {
+    printf("entering cmd print\n");
+
+    //    if(node->child[0]->type == TREE_STRING)
+    //  return 1;
+    TREENODE *printlist;
+    int iterate = 1;
+    printlist = node->child[0];
+    while(iterate) {
+      printf("iterate\n");
+      if(printlist->type == TREE_CMD_PRINT_LIST_HEAD || printlist->type == TREE_CMD_PRINT_LIST_TAIL) {
+        if(printlist->child[0]->type == TREE_STRING) {
+
+        } else {
+	  //its an exp
+          //must be an arithmetic expression
+          expDataType = getExpDataType(printlist->child[0]);
+          if(expDataType == DATATYPE_INT || expDataType == DATATYPE_FLOAT) {
+            return 1;
+          } else {
+            printf("ERROR: print command has invalid type at line %d.\n", node->linenumber);
+          }
         }
+      }
+      if(printlist->type==  TREE_CMD_PRINT_LIST_HEAD) {
+         printlist = printlist->child[1];
+      } else {
+          iterate = 0;
+      }
+
+		
+      }
+    }
+	
+
+
+    
+  TREENODE* cmd = node;
+  //tests if return type is correct
+  if(cmd->type == TREE_CMD_RETURN){
+    int returnType = checkDataTypes(getExpDataType(cmd->child[0]), funcType);
+    if(returnType < 0){
+      printf("ERROR: Return type on line  %d is invalid.\n", cmd->linenumber);
+      exit(4);
+    }
+  }
+
+  // Atribuições de escalares
+  /*if (cmd->type == TREE_CMD_ATTR_VAR_SCALAR){
+    setTypes(cmd->child[0]);
+    if(checkDataTypes(cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1])) == -1){
+    printf("Atr errada: %d,  %d\n", cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1]));
+    printf("ERRO: Atribuição com tipos de dados incompatíveis na linha %d", cmd->linenumber);
+    exit(4);
+    }
     } */
 
-    return 1;
+  return 1;
 
 }
 
@@ -247,10 +284,18 @@ void setTypes(TREENODE *node) {
     int i;
     if(node == NULL) return;
 
-     for(i = 0; i < 4; i++)
-       if(node->type == TREE_DECLARATION)
-     if(node->child[i] != NULL)
-       setTypes(node->child[i]);
+    //    NAO!!!!!!
+    //
+    //     for(i = 0; i < 4; i++)
+    //   if(node->type == TREE_DECLARATION)
+    // if(node->child[i] != NULL)
+    //   setTypes(node->child[i]);
+
+    if(node->type == TREE_DECLARATION) {
+        setTypes(node->child[0]);
+        setTypes(node->child[1]);
+    }
+
 
     //check scalar declarations
     if(node->type == TREE_DECLARATION_SCALAR) {
@@ -321,8 +366,8 @@ void setTypes(TREENODE *node) {
                 node->child[1]->symbol->datatype = DATATYPE_FLOAT;
             else if (node->child[0]->type == TREE_KW_BOOL)
                 node->child[1]->symbol->datatype = DATATYPE_BOOL;
-
-            checkCommandlist(node->child[3], node->child[1]->symbol->datatype);
+            printf("function declarations\n");
+            checkCommand(node->child[3], node->child[1]->symbol->datatype);
         }
     }
 

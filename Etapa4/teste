@@ -21,8 +21,7 @@ int main()
 
     bd = 10;
 
-  print " Digite um numero: \n";
-
+  print " Digite um numero: \n" 8493 'a';
   c = a < b;
   read i;
   v[a*(b+c)] = 3;
