@@ -30,4 +30,4 @@ tgz: clean
 	tar cvzf  ../etapa4.tgz . --exclude-vcs
 
 clean:
-	@rm *.yy.* etapa3 y.*.* y.* *.o || true
+	@rm *.yy.* etapa4 y.*.* y.* *.o || true

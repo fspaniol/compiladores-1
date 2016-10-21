@@ -253,16 +253,16 @@ void setTypes(TREENODE *node) {
         printf("endvec\n");
     }
     //check function declarations
-    if(node->type == TREE_DECLARATION_FUC) {
+      if(node->type == TREE_DECLARATION_FUC) {
 
-    printf("startfuc\n");
-        if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
-            printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
-            exit(4);
-        }
-        else {
-            node->child[1]->symbol->type = SYMBOL_IDENTIFIER_FUNCTION;
-            node->child[1]->symbol->lineNumber = node->linenumber;
+      printf("startfuc\n");
+	  if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
+	      printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
+	      exit(4);
+	  }
+	  else {
+	      node->child[1]->symbol->type = SYMBOL_IDENTIFIER_FUNCTION;
+	      node->child[1]->symbol->lineNumber = node->linenumber;
             if(node->child[0]->type == TREE_KW_INTEGER)
                 node->child[1]->symbol->datatype = DATATYPE_INT;
             else if (node->child[0]->type == TREE_KW_CHAR)
