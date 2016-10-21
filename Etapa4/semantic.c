@@ -195,14 +195,30 @@ int getExpDataType(TREENODE *node) {
     | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
     | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
 
+
+
+
 // retorna 1 se tudo certo, incluindo o retorno da função
-int checkCommandlist(TREENODE *cmdList, int funcType){
-    if (cmdList == NULL) return 1;
+int checkCommand(TREENODE *node, int funcType){
+    if (node == NULL) return 1;
+    TREENODE *listHead;
+    //unwraps command block
+    if (node->type == TREE_CMD_BLOCK) {
+      listHead = node->child[0];
+      checkCommand(listHead, funcType);
+    }
 
-
+    //unwraps list
+    if(node->type == TREE_CMD_LIST_HEAD || node->type == TREE_CMD_LIST_HEAD) {
+      if(checkCommand(listHead->child[0], funcType) != 1)
+	return -1;
+      if(node->child[1] != NULL)
+	checkCommand(node->child[1], funcType);
+    }
+    
+    
     TREENODE* cmd = cmdList;
-
-    //Testa se o retorno é válido
+    //tests if return type is correct
     if(cmd->type == TREE_CMD_RETURN){
         int returnType = checkDataTypes(getExpDataType(cmd->child[0]), funcType);
         if(returnType < 0){
@@ -289,8 +305,6 @@ void setTypes(TREENODE *node) {
     }
     //check function declarations
       if(node->type == TREE_DECLARATION_FUC) {
-
-
         if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
             printf("ERRO SEMÂNTICO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d\n", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
             exit(4);
