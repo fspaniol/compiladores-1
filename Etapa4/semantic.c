@@ -20,7 +20,7 @@ int semanticAnalyser(TREENODE *root) {
 int checkDataTypes (int firstType, int secType) {
 
     if(firstType == secType)
-        return firstType;
+        return 0;
 
     if(firstType == DATATYPE_INT) {
         switch(secType) {
@@ -144,7 +144,7 @@ int getExpDataType(TREENODE *node) {
         //check if variable is declared
         checkIfVariableDeclared(node->child[0]);
         //check if variable is a vector
-        if(node->symbol->type != SYMBOL_IDENTIFIER_VECTOR) {
+        if(node->child[0]->symbol->type != SYMBOL_IDENTIFIER_VECTOR) {
             printf("Error. Only vectors can be indexed. Line %d\n", node->linenumber);
             exit(4);
         }
@@ -155,7 +155,7 @@ int getExpDataType(TREENODE *node) {
             printf("Error. vector has to be indexed by integer. Line %d\n", node->linenumber);
             exit(4);
         }
-        return(node->symbol->datatype);
+        return(node->child[0]->symbol->datatype);
 
     } 
     
@@ -190,16 +190,6 @@ int getExpDataType(TREENODE *node) {
     return -1;
 } 
 
-    /*: KW_READ identifier { $$ = createNode(TREE_CMD_READ, NULL, $2, NULL,NULL, NULL);}
-    | KW_PRINT print_list { $$ = createNode(TREE_CMD_PRINT, NULL, $2, NULL,NULL, NULL);}
-    | cmdblock      { $$ = $1;}
-    | identifier OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_SCALAR, NULL, $1, $3,NULL, NULL);}
-    | identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
-    | KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
-    | KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd { $$ = createNode(TREE_CMD_IF_ELSE, NULL, $3, $6, $8, NULL);}
-    | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
-    | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
-
 
 
 
@@ -228,6 +218,16 @@ int check_print_list(TREENODE *node) {
     return 1;
 }
 
+/*: KW_READ identifier { $$ = createNode(TREE_CMD_READ, NULL, $2, NULL,NULL, NULL);}
+| KW_PRINT print_list { $$ = createNode(TREE_CMD_PRINT, NULL, $2, NULL,NULL, NULL);}
+| cmdblock      { $$ = $1;}
+| identifier OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_SCALAR, NULL, $1, $3,NULL, NULL);}
+| identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
+| KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
+| KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd { $$ = createNode(TREE_CMD_IF_ELSE, NULL, $3, $6, $8, NULL);}
+| KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
+| KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
+
 
 
 // retorna 1 se tudo certo, incluindo o retorno da função
@@ -254,11 +254,71 @@ int checkCommand(TREENODE *node, int funcType){
 
   //print command
   if(node->type == TREE_CMD_PRINT) {
-    printf("entering cmd print\n");
     return check_print_list(node->child[0]);
 
   }
-	
+
+  //attribution operations
+  ///scalar
+  if(node->type == TREE_CMD_ATTR_VAR_SCALAR) {
+      if(node->child[0]->type != TREE_IDENTIFIER) {
+          printf("Error: Left hand side of attribution operator is not an identifier on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+      if(node->child[0]->symbol->type != SYMBOL_IDENTIFIER_SCALAR) {
+          printf("Error: Left hand side of attribution operator is a unindexed vector on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+
+
+      int rhs_datatype = getExpDataType(node->child[1]);
+      if(rhs_datatype == -1) {
+          printf("Error: right hand side of attribution operator is not an expression on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+      int result_datatype = checkDataTypes(node->child[0]->symbol->datatype, rhs_datatype);
+      if(result_datatype == 0 || result_datatype == node->child[0]->symbol->datatype)
+          return 1;
+      else {
+          printf("Error: right hand side of attribution operator has incompatible data type on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+
+  }
+
+  ///vector
+  if(node->type == TREE_CMD_ATTR_VAR_VEC) {
+      if(node->child[0]->type != TREE_IDENTIFIER) {
+          printf("Error: Left hand side of attribution operator is not an identifier on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+      if(node->child[0]->symbol->type != SYMBOL_IDENTIFIER_VECTOR) {
+          printf("Error: Left hand side of attribution operator is not a vector on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+
+      //checks is index is an integer
+      if(checkDataTypes(DATATYPE_INT, getExpDataType(node->child[1])) != 0) {
+          printf("Error: vector on left hand side of operator on line %d is not indexed with an integer value.\n", node->linenumber);
+          printf("check data types result.%d\n",checkDataTypes(DATATYPE_INT, getExpDataType(node->child[1])));
+          printf("index data type:%d\n.", getExpDataType(node->child[1]));
+          exit(-4);
+      }
+
+      int rhs_datatype = getExpDataType(node->child[2]);
+      if(rhs_datatype == -1) {
+          printf("Error: right hand side of attribution operator is not an expression on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+      int result_datatype = checkDataTypes(node->child[0]->symbol->datatype, rhs_datatype);
+      if(result_datatype == 0 || result_datatype == node->child[0]->symbol->datatype)
+          return 1;
+      else {
+          printf("Error: right hand side of attribution operator has incompatible data type on line %d.\n", node->linenumber);
+          exit(-4);
+      }
+
+  }
 
 
     
