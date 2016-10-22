@@ -137,7 +137,7 @@ int getExpDataType(TREENODE *node) {
         return(node->symbol->datatype);
     } else if(node->type == TREE_CHAR)
         return(DATATYPE_CHAR);
-    else if(node->type == LIT_INTEGER)
+    else if(node->type == TREE_INTEGER)
         return(DATATYPE_INT);
     else if(node->type == TREE_EXP_VEC_INDEX) {
         //expression is vector[exp]
@@ -160,16 +160,21 @@ int getExpDataType(TREENODE *node) {
     } 
     
     else if ((node->type == TREE_EXP_OP_BINARY) && (node->child[1] != NULL)) {
-        
+        int datatype = checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2]));
         switch(node->child[1]->type){
             case TREE_ADD:
             case TREE_SUB:
             case TREE_DIV: 
             case TREE_MUL:
-                if (checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2])) == 0 )
-                    return getExpDataType(node->child[0]);
-                else if (checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2])) > 0)
-                    return checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2]));
+                if (datatype == 0 )
+                    return(getExpDataType(node->child[0]));
+                else if (datatype > 0)
+                    return datatype;
+                else {
+                    printf("ERROR: Incompatible datatypes on line %d.\n", node->linenumber);
+                    exit(-4);
+                }
+
             case TREE_LE:
             case TREE_GE:
             case TREE_EQ:
@@ -195,11 +200,42 @@ int getExpDataType(TREENODE *node) {
     | KW_FOR '(' exp ')' cmd { $$ = createNode(TREE_CMD_FOR, NULL, $3, $5, NULL, NULL);}
     | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd { $$ = createNode(TREE_CMD_FOR_TO, NULL, $3, $5, $7, $9);} */
 
+
+
+
+int check_print_list(TREENODE *node) {
+    int type;
+    //print list LIT_STRING print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), $2,NULL, NULL);}
+    //| exp print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, $1, $2,NULL, NULL);}
+    // | LIT_STRING { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL,NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), NULL,NULL, NULL);}
+    //| exp { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL, NULL, $1, NULL,NULL, NULL);}
+    if(node->type == TREE_CMD_PRINT_LIST_HEAD || node->type == TREE_CMD_PRINT_LIST_TAIL) {
+        if(node->child[0]->type != TREE_STRING) {
+            //it must be an arithmetical expression
+            type = getExpDataType(node->child[0]);
+
+            if(type != DATATYPE_INT && type != DATATYPE_CHAR && type != DATATYPE_FLOAT) {
+                //invalid expression type
+                printf("ERROR: Invalid expression type on print command on line %d. type is %d\n", node->linenumber, type);
+                exit(-4);
+            }
+        }
+    }
+    if(node->type == TREE_CMD_PRINT_LIST_HEAD) {
+        //the list continues. recurse function
+        return check_print_list(node->child[1]);
+    }
+    return 1;
+}
+
+
+
 // retorna 1 se tudo certo, incluindo o retorno da função
 int checkCommand(TREENODE *node, int funcType){
   int expDataType;
   //test empty command
-  if (node == NULL) return 1;
+  if (node == NULL)
+    return 1;
     
   TREENODE *listHead;
   //unwraps command block
@@ -210,46 +246,18 @@ int checkCommand(TREENODE *node, int funcType){
 
   //unwraps list
   if(node->type == TREE_CMD_LIST_HEAD || node->type == TREE_CMD_LIST_TAIL) {
-    if(checkCommand(listHead->child[0], funcType) != 1)
+    if(checkCommand(node->child[0], funcType) != 1)
       return -1;
-    if(node->child[1] != NULL)
+    if(node->type == TREE_CMD_LIST_HEAD && node->child[1] != NULL)
       checkCommand(node->child[1], funcType);
   }
 
   //print command
   if(node->type == TREE_CMD_PRINT) {
     printf("entering cmd print\n");
+    return check_print_list(node->child[0]);
 
-    //    if(node->child[0]->type == TREE_STRING)
-    //  return 1;
-    TREENODE *printlist;
-    int iterate = 1;
-    printlist = node->child[0];
-    while(iterate) {
-      printf("iterate\n");
-      if(printlist->type == TREE_CMD_PRINT_LIST_HEAD || printlist->type == TREE_CMD_PRINT_LIST_TAIL) {
-        if(printlist->child[0]->type == TREE_STRING) {
-
-        } else {
-	  //its an exp
-          //must be an arithmetic expression
-          expDataType = getExpDataType(printlist->child[0]);
-          if(expDataType == DATATYPE_INT || expDataType == DATATYPE_FLOAT) {
-            return 1;
-          } else {
-            printf("ERROR: print command has invalid type at line %d.\n", node->linenumber);
-          }
-        }
-      }
-      if(printlist->type==  TREE_CMD_PRINT_LIST_HEAD) {
-         printlist = printlist->child[1];
-      } else {
-          iterate = 0;
-      }
-
-		
-      }
-    }
+  }
 	
 
 
