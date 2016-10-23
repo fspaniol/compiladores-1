@@ -89,12 +89,11 @@ int verifyParams(TREENODE* node, TREENODE* function){
         TREENODE *decList = node->child[2];
         TREENODE *callList = function->child[1];
         // Se são os dois void, está certo
-        if(decList == NULL && callList==NULL) return checkDataTypes(getLiteralType(decList->child[0]), getLiteralType(callList->child[0]));
+        if(decList == NULL && callList==NULL) return checkDataTypes(getLiteralType(decList->child[0]), getExpDataType(callList->child[0]));
         if(decList == NULL || callList==NULL) return -1; // quantidade de variaveis diferente
-        if(decList->type != callList->type) return -1; //Pode ser head ou tail
 
         // Testa os parâmetros um a um
-        while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_DEC_FUC_PARAM_HEAD){
+        while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_HEAD){
             declaredType = getLiteralType(decList->child[0]);
             calledType = getExpDataType(callList->child[0]);
             if (checkDataTypes(calledType, declaredType) == -1) return -1;
@@ -102,9 +101,12 @@ int verifyParams(TREENODE* node, TREENODE* function){
             callList = callList->child[1];
         }
         // Testa se um é tail e o outro não
-        if(decList->type != callList->type) return -1;
+        if ((decList->type == TREE_DEC_FUC_PARAM_HEAD) && (callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_TAIL)) return -1;
+        if ((decList->type == TREE_DEC_FUC_PARAM_TAIL) && (callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_HEAD)) return -1;
+
 
         //Testa se as tails são iguais
+
         declaredType = getLiteralType(decList->child[0]);
         calledType = getExpDataType(callList->child[0]);
         if (checkDataTypes(calledType, declaredType) == -1) return -1;
@@ -198,7 +200,7 @@ int getExpDataType(TREENODE *node) {
         exit(4);
       }
       if (verifyParams(raiz, node) == -1){
-        printf("ERROR: Function %s at line %d os called with the wrong parameters\n", node->child[0]->symbol->key, node->linenumber);
+        printf("ERROR: Function %s at line %d is called with the wrong parameters\n", node->child[0]->symbol->key, node->linenumber);
         exit(4);
       }
       return verifyParams(raiz, node);
@@ -340,7 +342,7 @@ int checkCommand(TREENODE *node, int funcType){
         //Cuida dos comandos dentro dos FOR's e IFS e ElSE
   if ((node->type == TREE_CMD_IF) || (node->type == TREE_CMD_FOR))
     checkCommand(node->child[1], funcType);
-  else if (node->type == TREE_CMD_IF_ELSE){
+  else if (node->type == TREE_CMD_IF_ELSE) {
     checkCommand(node->child[1], funcType);
     checkCommand(node->child[2], funcType);
   }
