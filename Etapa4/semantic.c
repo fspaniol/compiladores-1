@@ -195,10 +195,6 @@ int getExpDataType(TREENODE *node) {
 
 int check_print_list(TREENODE *node) {
     int type;
-    //print list LIT_STRING print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), $2,NULL, NULL);}
-    //| exp print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, $1, $2,NULL, NULL);}
-    // | LIT_STRING { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL,NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), NULL,NULL, NULL);}
-    //| exp { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL, NULL, $1, NULL,NULL, NULL);}
     if(node->type == TREE_CMD_PRINT_LIST_HEAD || node->type == TREE_CMD_PRINT_LIST_TAIL) {
         if(node->child[0]->type != TREE_STRING) {
             //it must be an arithmetical expression
@@ -320,6 +316,20 @@ int checkCommand(TREENODE *node, int funcType){
 
   }
 
+  //if commands check : test if exp is boolean
+  //checks nested commands
+  if(node->type == TREE_CMD_IF || node->type == TREE_CMD_IF_ELSE) {
+    if(getExpDataType(node->child[0])!= DATATYPE_BOOL) {
+        printf("ERROR: Conditional expression on if command must be of type Boolean. Line  %d .\n", node->linenumber);
+        exit(-4);
+    }
+    checkCommand(node->child[1], funcType);
+  }
+  if(node->type == TREE_CMD_IF_ELSE) {
+    checkCommand(node->child[2], funcType);
+  }
+
+
 
     
   TREENODE* cmd = node;
@@ -332,15 +342,6 @@ int checkCommand(TREENODE *node, int funcType){
     }
   }
 
-  // Atribuições de escalares
-  /*if (cmd->type == TREE_CMD_ATTR_VAR_SCALAR){
-    setTypes(cmd->child[0]);
-    if(checkDataTypes(cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1])) == -1){
-    printf("Atr errada: %d,  %d\n", cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1]));
-    printf("ERRO: Atribuição com tipos de dados incompatíveis na linha %d", cmd->linenumber);
-    exit(4);
-    }
-    } */
 
   return 1;
 
