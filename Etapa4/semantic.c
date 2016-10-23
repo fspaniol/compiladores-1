@@ -56,7 +56,8 @@ int checkDataTypes (int firstType, int secType) {
     }
 
     else if (firstType == DATATYPE_BOOL)
-        return 0;
+        if(secType == DATATYPE_BOOL)
+            return 0;
     return -1;
 }
 
@@ -214,10 +215,6 @@ int getExpDataType(TREENODE *node) {
 
 int check_print_list(TREENODE *node) {
     int type;
-    //print list LIT_STRING print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), $2,NULL, NULL);}
-    //| exp print_list { $$ = createNode(TREE_CMD_PRINT_LIST_HEAD, NULL, $1, $2,NULL, NULL);}
-    // | LIT_STRING { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL,NULL, createNode(TREE_STRING, $1,NULL,NULL,NULL,NULL), NULL,NULL, NULL);}
-    //| exp { $$ = createNode(TREE_CMD_PRINT_LIST_TAIL, NULL, $1, NULL,NULL, NULL);}
     if(node->type == TREE_CMD_PRINT_LIST_HEAD || node->type == TREE_CMD_PRINT_LIST_TAIL) {
         if(node->child[0]->type != TREE_STRING) {
             //it must be an arithmetical expression
@@ -351,7 +348,18 @@ int checkCommand(TREENODE *node, int funcType){
 
 
 
-
+  //if commands check : test if exp is boolean
+  //checks nested commands
+  if(node->type == TREE_CMD_IF || node->type == TREE_CMD_IF_ELSE) {
+    if(getExpDataType(node->child[0])!= DATATYPE_BOOL) {
+        printf("ERROR: Conditional expression on if command must be of type Boolean. Line  %d .\n", node->linenumber);
+        exit(-4);
+    }
+    checkCommand(node->child[1], funcType);
+  }
+  if(node->type == TREE_CMD_IF_ELSE) {
+    checkCommand(node->child[2], funcType);
+  }
     
   TREENODE* cmd = node;
   //tests if return type is correct
@@ -363,7 +371,10 @@ int checkCommand(TREENODE *node, int funcType){
     }
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 491295a4f0e75d46eb3e16e47f816f5fd94f4b04
 
   return 1;
 
