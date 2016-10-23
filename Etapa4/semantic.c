@@ -53,7 +53,8 @@ int checkDataTypes (int firstType, int secType) {
     }
 
     else if (firstType == DATATYPE_BOOL)
-        return 0;
+        if(secType == DATATYPE_BOOL)
+            return 0;
     return -1;
 }
 
@@ -328,9 +329,6 @@ int checkCommand(TREENODE *node, int funcType){
   if(node->type == TREE_CMD_IF_ELSE) {
     checkCommand(node->child[2], funcType);
   }
-
-
-
     
   TREENODE* cmd = node;
   //tests if return type is correct
