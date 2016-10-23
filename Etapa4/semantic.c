@@ -5,8 +5,11 @@
 #include "tree.h"
 #include "y.tab.h"
 
+TREENODE *raiz;
+
 int semanticAnalyser(TREENODE *root) {
     int i;
+    raiz = root;
     setTypes(root);
 
   return 1;
@@ -86,7 +89,7 @@ int verifyParams(TREENODE* node, TREENODE* function){
         TREENODE *decList = node->child[2];
         TREENODE *callList = function->child[1];
         // Se são os dois void, está certo
-        if(decList == NULL && callList==NULL) return 1;
+        if(decList == NULL && callList==NULL) return checkDataTypes(getLiteralType(decList->child[0]), getLiteralType(callList->child[0]));
         if(decList == NULL || callList==NULL) return -1; // quantidade de variaveis diferente
         if(decList->type != callList->type) return -1; //Pode ser head ou tail
 
@@ -105,7 +108,8 @@ int verifyParams(TREENODE* node, TREENODE* function){
         declaredType = getLiteralType(decList->child[0]);
         calledType = getExpDataType(callList->child[0]);
         if (checkDataTypes(calledType, declaredType) == -1) return -1;
-        return 1;
+
+        return checkDataTypes(calledType, declaredType);
 
     }
     else {
@@ -186,7 +190,20 @@ int getExpDataType(TREENODE *node) {
                 return DATATYPE_BOOL;
         } 
         
-    } 
+    }
+     if (node->type == TREE_EXP_FUNC_CALL){
+
+      if(verifyParams(raiz, node)== -4) {
+        printf("ERROR: Function %s called at line %d is not declared.\n", node->child[0]->symbol->key, node->linenumber);
+        exit(4);
+      }
+      if (verifyParams(raiz, node) == -1){
+        printf("ERROR: Function %s at line %d os called with the wrong parameters\n", node->child[0]->symbol->key, node->linenumber);
+        exit(4);
+      }
+      return verifyParams(raiz, node);
+    }
+
     return -1;
 } 
 
@@ -318,7 +335,19 @@ int checkCommand(TREENODE *node, int funcType){
           exit(-4);
       }
 
+
   }
+        //Cuida dos comandos dentro dos FOR's e IFS e ElSE
+  if ((node->type == TREE_CMD_IF) || (node->type == TREE_CMD_FOR))
+    checkCommand(node->child[1], funcType);
+  else if (node->type == TREE_CMD_IF_ELSE){
+    checkCommand(node->child[1], funcType);
+    checkCommand(node->child[2], funcType);
+  }
+  else if (node->type == TREE_CMD_FOR_TO)
+    checkCommand(node->child[3], funcType);
+
+
 
 
     
@@ -332,15 +361,7 @@ int checkCommand(TREENODE *node, int funcType){
     }
   }
 
-  // Atribuições de escalares
-  /*if (cmd->type == TREE_CMD_ATTR_VAR_SCALAR){
-    setTypes(cmd->child[0]);
-    if(checkDataTypes(cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1])) == -1){
-    printf("Atr errada: %d,  %d\n", cmd->child[0]->symbol->datatype, getExpDataType(cmd->child[1]));
-    printf("ERRO: Atribuição com tipos de dados incompatíveis na linha %d", cmd->linenumber);
-    exit(4);
-    }
-    } */
+
 
   return 1;
 
@@ -438,8 +459,6 @@ void setTypes(TREENODE *node) {
             checkCommand(node->child[3], node->child[1]->symbol->datatype);
         }
     }
-
-
 
 }
 
