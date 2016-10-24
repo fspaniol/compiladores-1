@@ -368,7 +368,7 @@ int checkCommand(TREENODE *node, int funcType){
   //tests if return type is correct
   if(cmd->type == TREE_CMD_RETURN){
     int returnType = checkDataTypes(getExpDataType(cmd->child[0]), funcType);
-    if(returnType < 0){
+    if(returnType != 0 && returnType!=funcType){
       printf("ERROR: Return type on line  %d is invalid.\n", cmd->linenumber);
       exit(4);
     }
