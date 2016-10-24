@@ -11,7 +11,7 @@ bool mat[2] : TRUE FALSE;
 float exp:10;
 
 
-int ab (int a, float bX){
+int ab (int a, int bX){
   return a + bX;
 };
 

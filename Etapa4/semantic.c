@@ -68,7 +68,7 @@ void checkIfVariableDeclared(TREENODE *node) {
     if(node->symbol->type == SYMBOL_IDENTIFIER) {
         //variable is not declared
         printf("Error. variable %s referenced before declaration on line %d\n", node->symbol->key, node->linenumber);
-        exit(-4);
+        exit(4);
     }
 }
 
@@ -182,7 +182,7 @@ int getExpDataType(TREENODE *node) {
                     return datatype;
                 else {
                     printf("ERROR: Incompatible datatypes on line %d.\n", node->linenumber);
-                    exit(-4);
+                    exit(4);
                 }
 
             case TREE_LE:
@@ -226,7 +226,7 @@ int check_print_list(TREENODE *node) {
             if(type != DATATYPE_INT && type != DATATYPE_CHAR && type != DATATYPE_FLOAT) {
                 //invalid expression type
                 printf("ERROR: Invalid expression type on print command on line %d. type is %d\n", node->linenumber, type);
-                exit(-4);
+                exit(4);
             }
         }
     }
@@ -282,25 +282,25 @@ int checkCommand(TREENODE *node, int funcType){
   if(node->type == TREE_CMD_ATTR_VAR_SCALAR) {
       if(node->child[0]->type != TREE_IDENTIFIER) {
           printf("Error: Left hand side of attribution operator is not an identifier on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
       if(node->child[0]->symbol->type != SYMBOL_IDENTIFIER_SCALAR) {
           printf("Error: Left hand side of attribution operator is a unindexed vector on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
 
 
       int rhs_datatype = getExpDataType(node->child[1]);
       if(rhs_datatype == -1) {
           printf("Error: right hand side of attribution operator is not an expression on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
       int result_datatype = checkDataTypes(node->child[0]->symbol->datatype, rhs_datatype);
       if(result_datatype == 0 || result_datatype == node->child[0]->symbol->datatype)
           return 1;
       else {
           printf("Error: right hand side of attribution operator has incompatible data type on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
 
   }
@@ -309,11 +309,11 @@ int checkCommand(TREENODE *node, int funcType){
   if(node->type == TREE_CMD_ATTR_VAR_VEC) {
       if(node->child[0]->type != TREE_IDENTIFIER) {
           printf("Error: Left hand side of attribution operator is not an identifier on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
       if(node->child[0]->symbol->type != SYMBOL_IDENTIFIER_VECTOR) {
           printf("Error: Left hand side of attribution operator is not a vector on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
 
       //checks is index is an integer
@@ -321,20 +321,20 @@ int checkCommand(TREENODE *node, int funcType){
           printf("Error: vector on left hand side of operator on line %d is not indexed with an integer value.\n", node->linenumber);
           printf("check data types result.%d\n",checkDataTypes(DATATYPE_INT, getExpDataType(node->child[1])));
           printf("index data type:%d\n.", getExpDataType(node->child[1]));
-          exit(-4);
+          exit(4);
       }
 
       int rhs_datatype = getExpDataType(node->child[2]);
       if(rhs_datatype == -1) {
           printf("Error: right hand side of attribution operator is not an expression on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
       int result_datatype = checkDataTypes(node->child[0]->symbol->datatype, rhs_datatype);
       if(result_datatype == 0 || result_datatype == node->child[0]->symbol->datatype)
           return 1;
       else {
           printf("Error: right hand side of attribution operator has incompatible data type on line %d.\n", node->linenumber);
-          exit(-4);
+          exit(4);
       }
 
 
@@ -356,7 +356,7 @@ int checkCommand(TREENODE *node, int funcType){
   if(node->type == TREE_CMD_IF || node->type == TREE_CMD_IF_ELSE) {
     if(getExpDataType(node->child[0])!= DATATYPE_BOOL) {
         printf("ERROR: Conditional expression on if command must be of type Boolean. Line  %d .\n", node->linenumber);
-        exit(-4);
+        exit(4);
     }
     checkCommand(node->child[1], funcType);
   }
@@ -396,7 +396,7 @@ void setTypes(TREENODE *node) {
     //checks if identifies has already been declared
         if(node->child[1]->symbol->type != SYMBOL_IDENTIFIER) {
             printf("ERRO: Redeclaração de \" %s \", na linha %d. Declarada na linha %d", node->child[1]->symbol->key, node->linenumber, node->child[1]->symbol->lineNumber);
-            exit(-4);
+            exit(4);
         }
         else {
             node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;

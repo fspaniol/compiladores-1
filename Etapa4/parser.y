@@ -1,9 +1,9 @@
 %{
         #include <stdio.h>
         #include <stdlib.h>
-	#include "hash.h"
-	#include "tree.h"
-	#include "semantic.h"
+    #include "hash.h"
+    #include "tree.h"
+    #include "semantic.h"
         int getLineNumber();
         int yyerror();
         int yylex();
@@ -64,8 +64,8 @@
 %token<symbol> LIT_STRING
 %token TOKEN_ERROR
 %union{
-	HASHCELL* symbol;
-	TREENODE* node;
+    HASHCELL* symbol;
+    TREENODE* node;
 }
 
 %left OPERATOR_LE OPERATOR_GE OPERATOR_NE OPERATOR_L OPERATOR_G
@@ -88,23 +88,23 @@ rootnode
     ;
 program
     : declaration ';' program {$$ = createNode(TREE_DECLARATION, NULL, $1, $3, NULL, NULL);}
-    |			      {$$ = NULL;}
+    |                 {$$ = NULL;}
     ;
 
 datatype
-    : KW_INT		{ $$ = createNode(TREE_KW_INTEGER, NULL, NULL, NULL, NULL, NULL);}
-    | KW_FLOAT		{ $$ = createNode(TREE_KW_FLOAT, NULL, NULL, NULL, NULL, NULL);}
-    | KW_BOOL		{ $$ = createNode(TREE_KW_BOOL, NULL, NULL, NULL, NULL, NULL);}
-    | KW_CHAR  		{ $$ = createNode(TREE_KW_CHAR, NULL, NULL, NULL, NULL, NULL);}
+    : KW_INT        { $$ = createNode(TREE_KW_INTEGER, NULL, NULL, NULL, NULL, NULL);}
+    | KW_FLOAT      { $$ = createNode(TREE_KW_FLOAT, NULL, NULL, NULL, NULL, NULL);}
+    | KW_BOOL       { $$ = createNode(TREE_KW_BOOL, NULL, NULL, NULL, NULL, NULL);}
+    | KW_CHAR       { $$ = createNode(TREE_KW_CHAR, NULL, NULL, NULL, NULL, NULL);}
     ;
 
 params
     : params_non_empty { $$ = $1;}
-    |		       { $$ = NULL;}
+    |              { $$ = NULL;}
     ;
 params_non_empty
     : datatype identifier ',' params_non_empty { $$ = createNode(TREE_DEC_FUC_PARAM_HEAD, NULL, $1, $2, $4, NULL);}
-    | datatype identifier		{ $$ = createNode(TREE_DEC_FUC_PARAM_TAIL, NULL, $1, $2, NULL, NULL);}
+    | datatype identifier       { $$ = createNode(TREE_DEC_FUC_PARAM_TAIL, NULL, $1, $2, NULL, NULL);}
     ;
 
 init_literal_list
@@ -125,8 +125,8 @@ integer
 declaration
     : datatype identifier ':' init_literal { $$ = createNode(TREE_DECLARATION_SCALAR, NULL, $1, $2, $4, NULL);}
     | datatype identifier '[' integer ']' ':' init_literal_list { $$ = createNode(TREE_DECLARATION_VEC_LIT, NULL, $1, $2, $4, $7);}
-    | datatype identifier '[' integer ']'			{ $$ = createNode(TREE_DECLARATION_VEC_NOLIT, NULL, $1, $2, $4, NULL);}
-    | datatype identifier '(' params ')' cmdblock		{ $$ = createNode(TREE_DECLARATION_FUC, NULL,  $1, $2, $4, $6);}
+    | datatype identifier '[' integer ']'           { $$ = createNode(TREE_DECLARATION_VEC_NOLIT, NULL, $1, $2, $4, NULL);}
+    | datatype identifier '(' params ')' cmdblock       { $$ = createNode(TREE_DECLARATION_FUC, NULL,  $1, $2, $4, $6);}
     ;
 
 identifier
@@ -135,8 +135,8 @@ identifier
 cmd
     : KW_READ identifier { $$ = createNode(TREE_CMD_READ, NULL, $2, NULL,NULL, NULL);}
     | KW_PRINT print_list { $$ = createNode(TREE_CMD_PRINT, NULL, $2, NULL,NULL, NULL);}
-    | KW_RETURN exp	{ $$ = createNode(TREE_CMD_RETURN, NULL, $2, NULL,NULL, NULL);}
-    | cmdblock		{ $$ = $1;}
+    | KW_RETURN exp { $$ = createNode(TREE_CMD_RETURN, NULL, $2, NULL,NULL, NULL);}
+    | cmdblock      { $$ = $1;}
     | identifier OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_SCALAR, NULL, $1, $3,NULL, NULL);}
     | identifier '[' exp ']' OPERATOR_ATTR exp { $$ = createNode(TREE_CMD_ATTR_VAR_VEC, NULL, $1, $3, $6, NULL);}
     | KW_IF '(' exp ')' KW_THEN cmd { $$ = createNode(TREE_CMD_IF, NULL, $3, $6, NULL, NULL);}
@@ -162,18 +162,18 @@ cmdblock
     : '{' cmdlist '}' { $$ = createNode(TREE_CMD_BLOCK, NULL, $2, NULL,NULL, NULL);}
     ;
 operator
-    : OPERATOR_LE	{ $$ = createNode(TREE_LE, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_GE	{ $$ = createNode(TREE_GE, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_EQ	{ $$ = createNode(TREE_EQ, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_NE  	{ $$ = createNode(TREE_NE, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_L 	{ $$ = createNode(TREE_L, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_G	{ $$ = createNode(TREE_G, NULL, NULL, NULL,NULL, NULL);}
+    : OPERATOR_LE   { $$ = createNode(TREE_LE, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_GE   { $$ = createNode(TREE_GE, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_EQ   { $$ = createNode(TREE_EQ, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_NE   { $$ = createNode(TREE_NE, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_L    { $$ = createNode(TREE_L, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_G    { $$ = createNode(TREE_G, NULL, NULL, NULL,NULL, NULL);}
     | OPERATOR_AND  { $$ = createNode(TREE_AND, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_OR  	{ $$ = createNode(TREE_OR, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_MUL	{ $$ = createNode(TREE_MUL, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_DIV	{ $$ = createNode(TREE_DIV, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_SUB	{ $$ = createNode(TREE_SUB, NULL, NULL, NULL,NULL, NULL);}
-    | OPERATOR_ADD	{ $$ = createNode(TREE_ADD, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_OR   { $$ = createNode(TREE_OR, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_MUL  { $$ = createNode(TREE_MUL, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_DIV  { $$ = createNode(TREE_DIV, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_SUB  { $$ = createNode(TREE_SUB, NULL, NULL, NULL,NULL, NULL);}
+    | OPERATOR_ADD  { $$ = createNode(TREE_ADD, NULL, NULL, NULL,NULL, NULL);}
     ;
 
 exp

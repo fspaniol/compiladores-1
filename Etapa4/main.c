@@ -8,14 +8,18 @@
 int main(int argc, char** argv){
         initMe();
         FILE *file;
+        if(argc < 2){
+        	printf("Arquivo não informado\n");
+        	exit(1);
+        }
         if((argc==2 && (file = fopen(argv[1], "r"))) ) {
 		yyin = file;
 		yyparse();
-		printf("Numero de linhas: %d \n",getLineNumber());	
 	}
 	else {
-		printf("Erro na abertura do arquivo!");
-		exit(-1);
+		printf("Erro na abertura do arquivo!\n");
+		exit(2);
 	}
+	printf("Compilação feita com sucesso!\n");
 	exit(0);
 }
