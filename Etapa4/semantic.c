@@ -84,18 +84,21 @@ int getLiteralType(TREENODE *node) {
 
 }
 
+
+
 int verifyParams(TREENODE* node, TREENODE* function){
     if(node->type == TREE_DECLARATION_FUC && strcmp(node->child[1]->symbol->key,function->child[0]->symbol->key)==0){
         int declaredType, calledType;
         TREENODE *decList = node->child[2];
         TREENODE *callList = function->child[1];
         // Se são os dois void, está certo
-        if(decList == NULL && callList==NULL) return checkDataTypes(getLiteralType(decList->child[0]), getExpDataType(callList->child[0]));
+        if(decList == NULL && callList==NULL) return checkDataTypes(decList->child[1]->symbol->datatype, getExpDataType(callList->child[0]));
         if(decList == NULL || callList==NULL) return -1; // quantidade de variaveis diferente
 
         // Testa os parâmetros um a um
         while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_HEAD){
-            declaredType = getLiteralType(decList->child[0]);
+          
+            declaredType = decList->child[1]->symbol->datatype;
             calledType = getExpDataType(callList->child[0]);
             if (checkDataTypes(calledType, declaredType) == -1) return -1;
             decList = decList->child[2];
@@ -108,7 +111,7 @@ int verifyParams(TREENODE* node, TREENODE* function){
 
         //Testa se as tails são iguais
 
-        declaredType = getLiteralType(decList->child[0]);
+        declaredType = decList->child[1]->symbol->datatype;
         calledType = getExpDataType(callList->child[0]);
         if (checkDataTypes(calledType, declaredType) == -1) return -1;
 
@@ -371,11 +374,6 @@ int checkCommand(TREENODE *node, int funcType){
     }
   }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 491295a4f0e75d46eb3e16e47f816f5fd94f4b04
-
   return 1;
 
 }
@@ -385,13 +383,6 @@ int checkCommand(TREENODE *node, int funcType){
 void setTypes(TREENODE *node) {
     int i;
     if(node == NULL) return;
-
-    //    NAO!!!!!!
-    //
-    //     for(i = 0; i < 4; i++)
-    //   if(node->type == TREE_DECLARATION)
-    // if(node->child[i] != NULL)
-    //   setTypes(node->child[i]);
 
     if(node->type == TREE_DECLARATION) {
         setTypes(node->child[0]);
@@ -468,9 +459,26 @@ void setTypes(TREENODE *node) {
                 node->child[1]->symbol->datatype = DATATYPE_FLOAT;
             else if (node->child[0]->type == TREE_KW_BOOL)
                 node->child[1]->symbol->datatype = DATATYPE_BOOL;
-            printf("function declarations\n");
+
+            setTypes(node->child[2]);
             checkCommand(node->child[3], node->child[1]->symbol->datatype);
         }
+    }
+    //check function parameters
+    if ((node->type == TREE_DEC_FUC_PARAM_HEAD) || (node->type == TREE_DEC_FUC_PARAM_TAIL)){
+            node->child[1]->symbol->lineNumber = node->linenumber;
+
+            if(node->child[0]->type == TREE_KW_INTEGER)
+                node->child[1]->symbol->datatype = DATATYPE_INT;
+            else if (node->child[0]->type == TREE_KW_CHAR)
+                node->child[1]->symbol->datatype = DATATYPE_CHAR;
+            else if (node->child[0]->type == TREE_KW_FLOAT)
+                node->child[1]->symbol->datatype = DATATYPE_FLOAT;
+            else if (node->child[0]->type == TREE_KW_BOOL)
+                node->child[1]->symbol->datatype = DATATYPE_BOOL;
+
+            if (node->type == TREE_DEC_FUC_PARAM_HEAD)
+              setTypes(node->child[2]);
     }
 
 }
