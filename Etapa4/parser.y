@@ -187,7 +187,7 @@ exp
     ;
 argument_list
     : argument_list_non_empty { $$ = $1;}
-    | { $$ = createNode(TREE_EXP_FUNC_CALL_ARG_LIST_TAIL, NULL, NULL,NULL, NULL, NULL);}
+    | { $$ = NULL;}
     ;
 
 argument_list_non_empty
