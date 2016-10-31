@@ -4,10 +4,7 @@
 #include "hash.h"
 
 /*OP codes are defined here*/
-#define TAC_NOP
-#define TAC_SYMBOL
-#define TAC_MOVE
-#define TAC_ADD
+#define OP_NOP
 
 
 typedef struct tac {
