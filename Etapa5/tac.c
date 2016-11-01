@@ -1,5 +1,8 @@
 #include "tac.h"
 
+int temp_count = 0;
+int label_count = 0;
+
 TAC *create_tac() {
     TAC *tc =(TAC*) calloc(sizeof(TAC),1);
     tc->next = NULL;
@@ -27,4 +30,24 @@ int append_list(TAC *dest, TAC *src) {
         dest = dest->next;
     dest->next = src;
     return 0;
+}
+
+char *make_label()
+{
+    char num[100];
+    sprintf("_label%d", label_count);
+    label_count++;
+    char *out = calloc(sizeof(char), strlen(num));
+    strncpy(out, num, strlen(num));
+    return out;
+}
+
+char *make_temp()
+{
+    char num[100];
+    sprintf("_temp%d", temp_count);
+    temp_count++;
+    char *out = calloc(sizeof(char), strlen(num));
+    strncpy(out, num, strlen(num));
+    return out;
 }

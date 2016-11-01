@@ -7,6 +7,7 @@
 #define OP_NOP
 
 
+
 typedef struct tac {
     int opcode;
     HASHCELL *addr[3];
@@ -16,6 +17,9 @@ typedef struct tac {
 TAC *create_tac();
 void print_tac_list(TAC *tc);
 int append_list(TAC *dest, TAC *src);
+
+char* make_label();
+char* make_temp();
 
 
 #endif
