@@ -4,11 +4,7 @@
 #include "hash.h"
 
 /*OP codes are defined here*/
-#define TAC_NOP
-#define TAC_SYMBOL
-#define TAC_MOVE
-#define TAC_ADD
-
+#define OP_NOP
 
 
 typedef struct tac {
@@ -20,9 +16,6 @@ typedef struct tac {
 TAC *create_tac();
 void print_tac_list(TAC *tc);
 int append_list(TAC *dest, TAC *src);
-
-char* make_label();
-char* make_temp();
 
 
 #endif
