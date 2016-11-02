@@ -32,7 +32,7 @@ int main()
     a = i + 1;
     };
   //print "Incrementado algumas vezes fica " a "\n";
-  if (a==5) then 
+  if (a==5 || TRUE) then 
     print "Parou no meio\n";
   if (a<2) then
     ;

@@ -3,27 +3,29 @@
 
 #include "hash.h"
 
-/*OP codes are defined here*/
-#define TAC_NOP
-#define TAC_SYMBOL
-#define TAC_MOVE
-#define TAC_ADD
+/* OP codes are defined here */
+#define TAC_NOP 1
+#define TAC_SYMBOL 2
+#define TAC_MOVE 3
 
+/* arithmetic operators */
+#define TAC_ADD
 
 
 typedef struct tac {
     int tac_code;
-    HASHCELL *addr[3];
-    struct tac next;
+    HASHCELL *result;
+    HASHCELL *op1;
+    HASHCELL *op2;
+    struct tac *next;
 } TAC;
 
-TAC *create_tac();
+TAC* tac_create(int tac_code, HASHCELL *result,HASHCELL *op1, HASHCELL *op2);
 void print_tac_list(TAC *tc);
-int append_list(TAC *dest, TAC *src);
+TAC* tac_join(TAC *dest, TAC *src);
 
 char* make_label();
 char* make_temp();
-
 
 #endif
 

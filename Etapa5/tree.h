@@ -17,7 +17,7 @@
 #define TREE_G   12
 #define TREE_ATTR 13
 
-//datatypes
+//datatypes reserved words
 #define TREE_KW_INTEGER  15
 #define TREE_KW_BOOL      16
 #define TREE_KW_CHAR      17
@@ -55,7 +55,7 @@
 #define TREE_CMD_FOR_TO 44
 #define TREE_CMD_EMPTY 55
 
-//variable declarations<
+//variable declarations
 #define TREE_DEC_VAR_VEC_LIT_LIST_HEAD 45
 #define TREE_DEC_VAR_VEC_LIT_LIST_TAIL 46
 #define TREE_DEC_VAR_VEC_NO_LIT 47
