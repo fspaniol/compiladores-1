@@ -8,7 +8,7 @@
 #define TAC_SYMBOL 2
 #define TAC_MOVE 3
 
-/* arithmetic operators */
+/* arithmetic and logical operators */
 #define TAC_ADD 4
 
 typedef struct tac {
