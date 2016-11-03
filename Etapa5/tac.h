@@ -10,6 +10,17 @@
 
 /* arithmetic and logical operators */
 #define TAC_ADD 4
+#define TAC_SUB 2
+#define TAC_DIV 3
+#define TAC_MUL 4
+#define TAC_LE  5
+#define TAC_GE  6
+#define TAC_EQ  7
+#define TAC_NE  8
+#define TAC_AND 9
+#define TAC_OR  10
+#define TAC_L   11
+#define TAC_G   12
 
 typedef struct tac {
     int tac_code;
