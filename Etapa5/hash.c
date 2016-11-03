@@ -1,4 +1,3 @@
-
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +23,7 @@ HASHCELL* getHASHCELL(char* key) {
     return NULL;
   while(strcmp(position->key, key)!=0){
     if(position->next == NULL)
-      return NULL;
+      return NULL;  
     position = position->next;
   }
   return position;
@@ -44,13 +43,17 @@ HASHCELL* addHash(char *key, int type) {
   int address;
   if(!inited)
     initHash();
+  printf("adding to hash %s \n", key);
   HASHCELL *ptr;
   address = hashFunction(key);
+  printf("hash0\n");
   ptr = getHASHCELL(key);
+  printf("hash0.1\n");
   if(ptr!=NULL)
     return ptr;
-
+  printf("hash1\n");
   HASHCELL *cell = (HASHCELL*) calloc(sizeof(HASHCELL), 1);
+  printf("hash2\n");
   cell->type = type;
   cell->datatype = -1;
   cell->next = NULL;
@@ -59,12 +62,13 @@ HASHCELL* addHash(char *key, int type) {
   cell->key = keycpy;
   if(table[address] == NULL) {
     table[address] = cell;
+  } else {
+      ptr = table[address];
+      while(ptr->next != NULL) {
+        ptr = ptr->next;
+      }
+      ptr->next = cell;
   }
-  ptr = table[address];
-  while(ptr->next != NULL) {
-    ptr = ptr->next;
-  }
-  ptr->next = cell;
   return cell;
 }
 

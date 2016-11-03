@@ -4,9 +4,11 @@
     #include "hash.h"
     #include "tree.h"
     #include "semantic.h"
+    #include "tac.h"
         int getLineNumber();
         int yyerror();
         int yylex();
+
 %}
 
 %type<node> program
@@ -84,7 +86,7 @@
 
 %%
 rootnode
-    : program {$$ = $1; semanticAnalyser(createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL));}
+    : program {$$ = $1; TREENODE *node = createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL); semanticAnalyser(node); gen_tac(node);}
     ;
 program
     : declaration ';' program {$$ = createNode(TREE_DECLARATION, NULL, $1, $3, NULL, NULL);}

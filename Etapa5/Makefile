@@ -7,8 +7,8 @@
 # and #include "main.c" in the last part of the scanner.l
 #
 
-etapa: lex.yy.c y.tab.o main.o hash.o tree.o semantic.o
-	gcc -g -rdynamic -o etapa4 lex.yy.c y.tab.c main.o hash.o tree.o semantic.o
+etapa: lex.yy.c y.tab.o main.o hash.o tree.o semantic.o tac.o
+	gcc -g -rdynamic -o etapa5 lex.yy.c y.tab.c main.o hash.o tree.o semantic.o tac.o
 
 lex.yy.c: scanner.l 
 	lex --header-file=lex.yy.h  scanner.l
@@ -24,10 +24,12 @@ tree.o: tree.c
 	gcc -g -c tree.c
 hash.o: hash.c
 	gcc -g -c hash.c
+tac.o:  tac.c
+	gcc -g -c tac.c
 semantic.o: semantic.c
 	gcc -g -c semantic.c
 tgz: clean
-	tar cvzf  ../etapa4.tgz . --exclude-vcs
+	tar cvzf  ../etapa5.tgz . --exclude-vcs
 
 clean:
-	@rm *.yy.* etapa4 y.*.* y.* *.o || true
+	@rm *.yy.* etapa5 y.*.* y.* *.o || true

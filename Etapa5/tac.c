@@ -1,13 +1,17 @@
 #include "tac.h"
 #include "tree.h"
+#include "hash.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 int temp_count = 0;
 int label_count = 0;
 
 TAC* tac_create(int tac_code, HASHCELL *result, HASHCELL *op1, HASHCELL *op2){
-    TAC *tc =(TAC*) calloc(sizeof(TAC),1);
+    printf("entered tac create\n");
+    TAC *tc = (TAC*) calloc(sizeof(TAC),1);
     tc->next = NULL;
-    tc->opcode = tac_code;
+    tc->tac_code = tac_code;
     tc->op1 = op1;
     tc->op2 = op2;
     tc->result = result;
@@ -16,47 +20,69 @@ TAC* tac_create(int tac_code, HASHCELL *result, HASHCELL *op1, HASHCELL *op2){
 
 void print_tac_list(TAC *tc) {
     while(tc != NULL) {
-        printf("OPCODE: %d \n", tc->opcode);
+        printf("OPCODE: %d \n", tc->tac_code);
         tc = tc->next;
     }
 }
 
 
 TAC* tac_join(TAC *dest, TAC *src) {
+
     if(dest == NULL)
         return src;
     if(src == NULL)
         return dest;
-    while(dest->next != NULL)
+    printf("joinbegin\n");
+    while(dest->next != NULL) {
+        printf("while");
         dest = dest->next;
+    }
     dest->next = src;
+    printf("join end\n");
     return dest;
 }
 
-char *make_label()
+HASHCELL *make_label()
 {
     char num[100];
-    sprintf("_label%d", label_count);
+    sprintf(num, "_label%d", label_count);
     label_count++;
-    char *out = calloc(sizeof(char), strlen(num));
-    strncpy(out, num, strlen(num));
-    return out;
+    return addHash(num, SYMBOL_CODEGEN_LABEL);
 }
 
-char *make_temp()
+HASHCELL *make_temp()
 {
     char num[100];
-    sprintf("_temp%d", temp_count);
+    printf("creating temp var:\n",num);
+    sprintf(num,"_temp%d", temp_count);
     temp_count++;
-    char *out = calloc(sizeof(char), strlen(num));
-    strncpy(out, num, strlen(num));
-    return out;
+    HASHCELL *temp = addHash(num, SYMBOL_CODEGEN_TEMP_VAR);
+    printf("finished\n");
+    return temp;
 }
+
+TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
+    int tac_op = -1;
+    switch(node->child[1]->type) {
+        case TREE_ADD:
+            tac_op = TAC_ADD;
+    }
+
+    TAC *children_tacs = tac_join(children_tac_array[0],children_tac_array[2]);
+    printf("Creating tac \n");
+    TAC *tc = tac_create(tac_op, make_temp(),
+                         children_tac_array[0] != NULL ? children_tac_array[0]->result : NULL,
+                         children_tac_array[2] != NULL ? children_tac_array[2]->result : NULL);
+    printf("tac created. joining \n");
+    make_label();
+    return tac_join(children_tacs, tc);
+}
+
 
 /* generate tac  */
 TAC* gen_tac(TREENODE *node) {
 
-    TAC children_tac[4];
+    TAC* children_tac[4];
     int counter;
 
     if(node == NULL)
@@ -64,7 +90,7 @@ TAC* gen_tac(TREENODE *node) {
     //depth first(left to right) algorithm
     /////considerar exceçoes
     for(counter = 0;counter < 4; counter++) {
-        children_tac[count] = gen_tac(node->child[count]);
+        children_tac[counter] = gen_tac(node->child[counter]);
     }
 
     TAC *tc = (TAC*)calloc(sizeof(TAC),1);
@@ -106,21 +132,15 @@ TAC* gen_tac(TREENODE *node) {
 
 
         default:
+
+            if(node != NULL) {
+                printf("ERROR. Unknown TREE NODE %d.\n", node->type);
+
+            }
+
+            break;
     }
+    return NULL;
 }
 
-TAC* gen_tac_exp_binary_op(TREENODE *node, TAC *children_tac_array) {
-    int tac_op = -1;
-    switch(node->child[1]) {
-        case TREE_ADD:
-            tac_op = TAC_ADD
-    }
-    TAC *children_tacs = tac_join(children_tac_array[0],children_tac_array[2]);
-    return tac_join(children_tacs,
-                tac_create(tap_op, make_temp(),
-                    children_tac_array[0] ? children_tac_array[0].result : NULL,
-                    children_tac_array[2] ? children_tac_array[2].result : NULL)
-                );
-
-    }
 

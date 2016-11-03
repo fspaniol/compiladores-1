@@ -2,6 +2,7 @@
 #define TREEH
 
 #include "hash.h"
+#include <stdio.h>
 
 #define TREE_ADD 1
 #define TREE_SUB 2
