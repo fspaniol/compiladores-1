@@ -29,7 +29,7 @@ tac.o:  tac.c
 semantic.o: semantic.c
 	gcc -g -c semantic.c
 tgz: clean
-	tar cvzf  ../etapa5.tgz . --exclude-vcs
+	tar cvzf  ../etapa5.tgz . --exclude-cvs
 
 clean:
 	@rm *.yy.* etapa5 y.*.* y.* *.o || true

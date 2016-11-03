@@ -25,7 +25,7 @@ void print_tac_list(TAC *tc) {
     }
 }
 
-
+//concat two tacs
 TAC* tac_join(TAC *dest, TAC *src) {
 
     if(dest == NULL)
@@ -64,19 +64,8 @@ HASHCELL *make_temp()
 TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
     int tac_op = -1;
     switch(node->child[1]->type) {
-        case TREE_ADD:tac_op = TAC_ADD; break;
-        case TREE_SUB:tac_op = TAC_SUB; break;
-        case TREE_DIV:tac_op = TAC_DIV; break;
-        case TREE_MUL:tac_op = TAC_MUL; break;
-        case TREE_LE:tac_op = TAC_LE; break;
-        case TREE_GE:tac_op = TAC_GE; break;
-        case TREE_EQ:tac_op = TAC_EQ; break;
-        case TREE_NE:tac_op = TAC_NE; break;
-        case TREE_AND:tac_op = TAC_AND; break;
-        case TREE_OR:tac_op = TAC_OR; break;
-        case TREE_L:tac_op = TAC_L; break;
-        case TREE_G:tac_op = TAC_G; break;
-
+        case TREE_ADD:
+            tac_op = TAC_ADD;
     }
 
     TAC *children_tacs = tac_join(children_tac_array[0],children_tac_array[2]);
@@ -140,10 +129,25 @@ TAC* gen_tac(TREENODE *node) {
 
 
         /* commands */
+        case TREE_READ:
+            if(node->child[0]->type == TREE_IDENTIFIER)
+                return node->child[0];
+            else
+                return tac_create(TAC_READ, 0, node[0]->result, 0);
+        /*case TREE_PRINT:
+            if(node->child[0]->type == TREE_IDENTIFIER)
+                return node->child[0];
+            else
+                return tac_create() */
+        case TREE_CMD_ATTR_VAR_SCALAR:
+            return tac_join(children_tac[1], tac_create(TAC_ATTR_SCALAR, children_tac[0]->result, children_tac[1]->result, 0));
+        case TREE_CMD_ATTR_VAR_VEC:
+            return tac_join(tac_join(children_tac[1], children_tac[2]), tac_create(TAC_ATTR_VEC, node->child[0]->symbol, children_tac[1]->result, children_tac[2]->result));
+
+
 
 
         default:
-
             if(node != NULL) {
                 printf("ERROR. Unknown TREE NODE %d.\n", node->type);
 

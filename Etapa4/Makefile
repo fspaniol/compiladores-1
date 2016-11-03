@@ -27,7 +27,7 @@ hash.o: hash.c
 semantic.o: semantic.c
 	gcc -g -c semantic.c
 tgz: clean
-	tar cvzf  ../etapa4.tgz . --exclude-vcs
+	tar cvzf  ../etapa4.tgz .
 
 clean:
 	@rm *.yy.* etapa4 y.*.* y.* *.o || true
