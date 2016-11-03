@@ -11,7 +11,7 @@ bool mat[2] : TRUE FALSE;
 float exp:10;
 
 
-int ab (int a, int bX){
+int ab (int a, float bX){
   return a + bX;
 };
 
@@ -24,15 +24,15 @@ int main()
 
 
   print " Digite um numero: \n" "outro teste" 876 + 32 ;
-  c = a + b;
+  c = a < b;
   read i;
-  
+  v[a*(b+c)] = 3;
   for (i<10) {
     a = incn(a,a);
     a = i + 1;
     };
   //print "Incrementado algumas vezes fica " a "\n";
-  if (a==5 || TRUE) then 
+  if (a==5) then 
     print "Parou no meio\n";
   if (a<2) then
     ;

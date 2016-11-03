@@ -32,7 +32,7 @@ int checkDataTypes (int firstType, int secType) {
         case DATATYPE_FLOAT:
             return DATATYPE_FLOAT;
         default:
-            return -1;
+            return 0;
         }
     }
     else if (firstType == DATATYPE_CHAR) {
@@ -42,7 +42,7 @@ int checkDataTypes (int firstType, int secType) {
         case DATATYPE_FLOAT:
             return DATATYPE_FLOAT;
         default:
-            return -1;
+            return 0;
         }
     }
     else if (firstType == DATATYPE_FLOAT) {
@@ -51,7 +51,7 @@ int checkDataTypes (int firstType, int secType) {
         case DATATYPE_CHAR:
             return DATATYPE_FLOAT;
         default:
-            return -1;
+            return 0;
         }
     }
 
@@ -167,9 +167,7 @@ int getExpDataType(TREENODE *node) {
         }
         return(node->child[0]->symbol->datatype);
 
-    }
-    else if (node->type == TREE_FALSE || node->type == TREE_TRUE)
-        return DATATYPE_BOOL;
+    } 
     
     else if ((node->type == TREE_EXP_OP_BINARY) && (node->child[1] != NULL)) {
         int datatype = checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2]));
