@@ -184,6 +184,8 @@ exp
     | exp operator exp { $$ = createNode(TREE_EXP_OP_BINARY, NULL, $1, $2, $3, NULL);} %prec EXPRESSION
     | '('exp')' { $$ = createNode(TREE_EXP_BRACKET_ENCLOSURE, NULL, $2,NULL, NULL, NULL);}
     | identifier '(' argument_list ')'  { $$ = createNode(TREE_EXP_FUNC_CALL, NULL, $1,$3, NULL, NULL);}
+    | LIT_FALSE    { $$ = createNode(TREE_FALSE, $1, NULL, NULL, NULL, NULL);}
+    | LIT_TRUE     { $$ = createNode(TREE_TRUE, $1, NULL, NULL, NULL, NULL);}
     ;
 argument_list
     : argument_list_non_empty { $$ = $1;}
