@@ -96,7 +96,7 @@ TAC* gen_tac(TREENODE *node) {
     TAC *tc = (TAC*)calloc(sizeof(TAC),1);
     switch(node->type) {
 
-        /* symbol nodes */
+        /* symbol and identifier nodes */
         case TREE_INTEGER:
         case TREE_TRUE:
         case TREE_FALSE:
@@ -105,7 +105,6 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_IDENTIFIER:
         case TREE_FLOAT:
             return tac_create(TAC_SYMBOL, node->symbol, NULL, NULL);
-
 
         /* expressions */
         case TREE_EXP_OP_BINARY:
@@ -129,16 +128,26 @@ TAC* gen_tac(TREENODE *node) {
 
 
         /* commands */
-        case TREE_READ:
-            if(node->child[0]->type == TREE_IDENTIFIER)
-                return node->child[0];
-            else
-                return tac_create(TAC_READ, 0, node[0]->result, 0);
-        /*case TREE_PRINT:
-            if(node->child[0]->type == TREE_IDENTIFIER)
-                return node->child[0];
-            else
-                return tac_create() */
+        case TREE_CMD_BLOCK:
+            return children_tac[0];
+        case TREE_CMD_READ:
+            return tac_create(TAC_READ, NULL, children_tac[0]->result,NULL);
+
+        /* print command*/
+        case TREE_CMD_PRINT:
+            return children_tac[0];
+
+        case TREE_CMD_PRINT_LIST_HEAD:
+            return tac_join(tac_join(children_tac[0],
+                                tac_create(TAC_PRINT, NULL, children_tac[0]->result, NULL)),
+                            children_tac[1]);
+        case TREE_CMD_PRINT_LIST_TAIL:
+            return tac_join(children_tac[0], tac_create(TAC_PRINT, NULL, children_tac[0]->result, NULL));
+        /* return command */
+        case TREE_CMD_RETURN:
+            return tac_join(children_tac[0],tac_create(TAC_RETURN, NULL, children_tac[0]->result,NULL));
+
+        /* attribution command */
         case TREE_CMD_ATTR_VAR_SCALAR:
             return tac_join(children_tac[1], tac_create(TAC_ATTR_SCALAR, children_tac[0]->result, children_tac[1]->result, 0));
         case TREE_CMD_ATTR_VAR_VEC:

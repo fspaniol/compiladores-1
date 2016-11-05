@@ -198,8 +198,9 @@ int getExpDataType(TREENODE *node) {
                 return DATATYPE_BOOL;
         }
         
-    }
-    if (node->type == TREE_EXP_FUNC_CALL){
+    } else if (node->type = TREE_EXP_BRACKET_ENCLOSURE) {
+        return getExpDataType(node->child[0]);
+    } else if (node->type == TREE_EXP_FUNC_CALL){
         
         if(verifyParams(raiz, node)== -4) {
             printf("ERROR: Function %s called at line %d is not declared.\n", node->child[0]->symbol->key, node->linenumber);

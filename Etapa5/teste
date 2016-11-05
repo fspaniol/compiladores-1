@@ -6,7 +6,7 @@ int b:0;
 int c:5;
 int d:10;
 int g[10];
-float v[676]: 0 0 0 0 0 0 0 0 0 0; 
+float v[676]: 0 0 0 0 0 0 0 0 0 0;
 bool mat[2] : TRUE FALSE;
 float exp:10;
 
@@ -24,9 +24,9 @@ int main()
 
 
   print " Digite um numero: \n" "outro teste" 876 + 32 ;
-  c = a < b;
+  c = a + b;
   read i;
-  v[a*(b+c)] = 3;
+  v[c+(a+b)] = 3;
   for (i<10) {
     a = incn(a,a);
     a = i + 1;
