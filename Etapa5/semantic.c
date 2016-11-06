@@ -83,22 +83,43 @@ int getLiteralType(TREENODE *node) {
     exit(4);
     
 }
-
+//funçãozinha que é usada em vários lugares XD
+int getDataTypeFromKW(int kw){
+    switch(kw){
+        case TREE_KW_INTEGER:
+            return DATATYPE_INT;
+        case TREE_KW_CHAR:
+            return DATATYPE_CHAR;
+        case TREE_KW_BOOL:
+            return DATATYPE_BOOL;
+        case TREE_KW_FLOAT:
+            return DATATYPE_FLOAT;
+            }
+}
 
 
 int verifyParams(TREENODE* node, TREENODE* function){
     if(node->type == TREE_DECLARATION_FUC && strcmp(node->child[1]->symbol->key,function->child[0]->symbol->key)==0){
+        int returnDatatype;
+        if (node->child[0] != NULL){
+            returnDatatype = getDataTypeFromKW(node->child[0]->type);
+        }
+        else
+            returnDatatype = -1;
         int declaredType, calledType;
         TREENODE *decList = node->child[2];
         TREENODE *callList = function->child[1];
         // Se são os dois void, está certo
-        if(decList == NULL && callList==NULL) return checkDataTypes(decList->child[1]->symbol->datatype, getExpDataType(callList->child[0]));
+        if(decList == NULL && callList==NULL) return returnDatatype;
+
         if(decList == NULL || callList==NULL) return -1; // quantidade de variaveis diferente
         
         // Testa os parâmetros um a um
+
         while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_HEAD){
             
-            declaredType = decList->child[1]->symbol->datatype;
+            
+            declaredType = getDataTypeFromKW(decList->child[0]->type);
             calledType = getExpDataType(callList->child[0]);
             if (checkDataTypes(calledType, declaredType) == -1) return -1;
             decList = decList->child[2];
@@ -111,11 +132,11 @@ int verifyParams(TREENODE* node, TREENODE* function){
         
         //Testa se as tails são iguais
         
-        declaredType = decList->child[1]->symbol->datatype;
+        declaredType = getDataTypeFromKW(decList->child[0]->type);
         calledType = getExpDataType(callList->child[0]);
         if (checkDataTypes(calledType, declaredType) == -1) return -1;
         
-        return checkDataTypes(calledType, declaredType);
+        return returnDatatype;
         
     }
     else {
@@ -201,16 +222,17 @@ int getExpDataType(TREENODE *node) {
     } else if (node->type == TREE_EXP_BRACKET_ENCLOSURE) {
         return getExpDataType(node->child[0]);
     } else if (node->type == TREE_EXP_FUNC_CALL){
+        int returnVerify = verifyParams(raiz, node);
         
-        if(verifyParams(raiz, node)== -4) {
+        if(returnVerify == -4) {
             printf("ERROR: Function %s called at line %d is not declared.\n", node->child[0]->symbol->key, node->linenumber);
             exit(4);
         }
-        if (verifyParams(raiz, node) == -1){
+        if (returnVerify == -1){
             printf("ERROR: Function %s at line %d is called with the wrong parameters\n", node->child[0]->symbol->key, node->linenumber);
             exit(4);
         }
-        return verifyParams(raiz, node);
+        return returnVerify;
     }
     
     return -1;
@@ -292,12 +314,12 @@ int checkCommand(TREENODE *node, int funcType){
             exit(4);
         }
         
-        
         int rhs_datatype = getExpDataType(node->child[1]);
         if(rhs_datatype == -1) {
             printf("Error: right hand side of attribution operator is not an expression on line %d.\n", node->linenumber);
             exit(4);
         }
+
         int result_datatype = checkDataTypes(node->child[0]->symbol->datatype, rhs_datatype);
         if(result_datatype == 0 || result_datatype == node->child[0]->symbol->datatype)
             return 1;
@@ -404,6 +426,7 @@ void setTypes(TREENODE *node) {
         else {
             node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;
             node->child[1]->symbol->lineNumber = node->linenumber;
+
             if(node->child[0]->type == TREE_KW_INTEGER)
                 node->child[1]->symbol->datatype = DATATYPE_INT;
             else if (node->child[0]->type == TREE_KW_CHAR)

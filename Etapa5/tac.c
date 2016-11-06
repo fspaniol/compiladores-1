@@ -153,14 +153,12 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_CMD_ATTR_VAR_VEC:
             return tac_join(tac_join(children_tac[1], children_tac[2]), tac_create(TAC_ATTR_VEC, node->child[0]->symbol, children_tac[1]->result, children_tac[2]->result));
 
-
-
-
         default:
             if(node != NULL) {
                 printf("ERROR. Unknown TREE NODE %d.\n", node->type);
 
             }
+            printTree(node);
 
             break;
     }
