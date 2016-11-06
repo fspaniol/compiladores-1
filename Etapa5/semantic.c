@@ -198,7 +198,7 @@ int getExpDataType(TREENODE *node) {
                 return DATATYPE_BOOL;
         }
         
-    } else if (node->type = TREE_EXP_BRACKET_ENCLOSURE) {
+    } else if (node->type == TREE_EXP_BRACKET_ENCLOSURE) {
         return getExpDataType(node->child[0]);
     } else if (node->type == TREE_EXP_FUNC_CALL){
         
