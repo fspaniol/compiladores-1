@@ -95,6 +95,7 @@ int getDataTypeFromKW(int kw){
         case TREE_KW_FLOAT:
             return DATATYPE_FLOAT;
             }
+    return -1;
 }
 
 
@@ -117,7 +118,6 @@ int verifyParams(TREENODE* node, TREENODE* function){
         // Testa os parâmetros um a um
 
         while(decList->type == TREE_DEC_FUC_PARAM_HEAD && callList ->type == TREE_EXP_FUNC_CALL_ARG_LIST_HEAD){
-            
             
             declaredType = getDataTypeFromKW(decList->child[0]->type);
             calledType = getExpDataType(callList->child[0]);

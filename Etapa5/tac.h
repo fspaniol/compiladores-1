@@ -40,6 +40,19 @@
 #define TAC_LABEL 28
 #define TAC_CALL 29
 
+#define TAC_VARDEC 30
+#define TAC_ATTR 31
+#define TAC_VECDEC 32
+
+#define TAC_IFZ 33
+#define TAC_JUMP 34
+
+#define TAC_BEGINFUNC 35
+#define TAC_ENDFUNC 36
+
+#define TAC_TO_VEC_MOVE 37
+
+
 
 typedef struct tac {
     int tac_code;
@@ -51,6 +64,7 @@ typedef struct tac {
 
 TAC* tac_create(int tac_code, HASHCELL *result,HASHCELL *op1, HASHCELL *op2);
 void print_tac_list(TAC *tc);
+void tac_print_single(TAC * tac);
 TAC* tac_join(TAC *dest, TAC *src);
 TAC* gen_tac(TREENODE *node);
 
