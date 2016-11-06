@@ -33,6 +33,13 @@
 #define TAC_FOR 		24
 #define TAC_FOR_TO  	25
 
+//Expressions 
+#define TAC_PUSH_ARGS 26
+#define TAC_POP_ARGS 27
+
+#define TAC_LABEL 28
+#define TAC_CALL 29
+
 
 typedef struct tac {
     int tac_code;

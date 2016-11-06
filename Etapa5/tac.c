@@ -61,26 +61,9 @@ HASHCELL *make_temp()
     return temp;
 }
 
-/*
-case TREE_ADD:
-    tac_op = TAC_ADD;
-    break;
-#define TREE_SUB 2
-#define TREE_DIV 3
-#define TREE_MUL 4
-#define TREE_LE  5
-#define TREE_GE  6
-#define TREE_EQ  7
-#define TREE_NE  8
-#define TREE_AND 9 
-#define TREE_OR  10
-#define TREE_L   11
-#define TREE_G   12
-#define TREE_ATTR 13
- */
-
 TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
     int tac_op = -1;
+    // I thought it would be necessary, but who knows... 
     switch(node->child[1]->type) {
         case TREE_ADD:
             tac_op = TAC_ADD;
@@ -121,21 +104,24 @@ TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
         default:
             tac_op = -1;
     }
-
+    if(tac_op == -1){
+        printf("Unknown tac operator");
+        exit(5);
+    }
     TAC *children_tacs = tac_join(children_tac_array[0],children_tac_array[2]);
     printf("Creating tac \n");
     TAC *tc = tac_create(tac_op, make_temp(),
                          children_tac_array[0] != NULL ? children_tac_array[0]->result : NULL,
                          children_tac_array[2] != NULL ? children_tac_array[2]->result : NULL);
     printf("tac created. joining \n");
-    make_label();
     return tac_join(children_tacs, tc);
 }
 
 
 /* generate tac  */
 TAC* gen_tac(TREENODE *node) {
-
+    HASHCELL* labelAux;
+    HASHCELL* tempAux;
     TAC* children_tac[4];
     int counter;
 
@@ -206,6 +192,18 @@ TAC* gen_tac(TREENODE *node) {
             return tac_join(children_tac[1], tac_create(TAC_ATTR_SCALAR, children_tac[0]->result, children_tac[1]->result, 0));
         case TREE_CMD_ATTR_VAR_VEC:
             return tac_join(tac_join(children_tac[1], children_tac[2]), tac_create(TAC_ATTR_VEC, node->child[0]->symbol, children_tac[1]->result, children_tac[2]->result));
+        
+        /*Function calls */
+        case TREE_EXP_FUNC_CALL:
+            labelAux = make_label();
+            tempAux  = make_temp();                     
+            return tac_join(children_tac[1],tac_join( tac_join(tac_create(TAC_CALL,node->child[0]->symbol,labelAux,0),tac_create(TAC_LABEL,labelAux,0,0)),
+                                                      tac_create(TAC_POP_ARGS,tempAux,0,0)));
+
+        case TREE_EXP_FUNC_CALL_ARG_LIST_HEAD:
+            return tac_join(children_tac[0],tac_join(tac_create(TAC_PUSH_ARGS,children_tac[0]->result,0,0),children_tac[1]));
+        case TREE_EXP_FUNC_CALL_ARG_LIST_TAIL:
+            return tac_join(children_tac[0],tac_join(tac_create(TAC_PUSH_ARGS,children_tac[0]->result,0,0),tac_join(children_tac[1],tac_create(TAC_PUSH_ARGS,children_tac[1]->result,0,0))));
 
         default:
             if(node != NULL) {
