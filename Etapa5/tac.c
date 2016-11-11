@@ -74,6 +74,8 @@ void tac_print(TAC * tac) {
   case TAC_CALL         : printf("TAC_CALL : ");        break;
   case TAC_PUSH_ARGS      : printf("TAC_PUSH : ");        break;
   case TAC_POP_ARGS       : printf("TAC_POP : ");         break;
+case TAC_ATTR_SCALAR: printf("TAC_ATTR_SCALAR: ");break;
+case TAC_ATTR_VEC: printf("TAC_ATTR_VEC: ");break;
   default           : printf("TAC_%d <!!!> : ", tac->tac_code); break;
   }
 
@@ -187,6 +189,7 @@ TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
 TAC* gen_tac(TREENODE *node) {
     HASHCELL* labelAux;
     HASHCELL* tempAux;
+    HASHCELL *temp_var;
     char* buffer;
 
     TAC* children_tac[4];
@@ -236,8 +239,21 @@ TAC* gen_tac(TREENODE *node) {
             break;
 
 
+        /* Variable declarations: dont neet to create tacs*/
+        case TREE_DECLARATION_SCALAR:
+        case TREE_DECLARATION_VEC_LIT:
+        case TREE_DECLARATION_VEC_NOLIT:
+            return NULL;
+
+        /* type reserved words: does nothing */
+        case TREE_KW_INTEGER:
+        case TREE_KW_BOOL:
+        case TREE_KW_CHAR:
+        case TREE_KW_FLOAT:
+            break;
         /* commands */
         case TREE_CMD_BLOCK:
+
             return children_tac[0];
         case TREE_CMD_READ:
             return tac_create(TAC_READ, NULL, children_tac[0]->result,NULL);
@@ -266,20 +282,50 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_CMD_ATTR_VAR_VEC:
             return tac_join(tac_join(children_tac[1], children_tac[2]), tac_create(TAC_ATTR_VEC, node->child[0]->symbol, children_tac[1]->result, children_tac[2]->result));
         
-        /* Variable declarations*/
-        /* var decs dont need to create TACs
-        case TREE_DECLARATION_SCALAR:
-            return tac_join(tac_create(TAC_VARDEC,node->child[1]->symbol,0,0),tac_create(TAC_ATTR,node->child[1]->symbol,node->child[2]->symbol,0));
-        // Case where the vector is just declared without the respective values
-        case TREE_DECLARATION_VEC_LIT:
-            hashVector = node->child[1]->symbol;
-            TAC* aux = gen_tac(node->child[2]);
-            TAC* aux2 = gen_tac(node->child[3]);
-            return tac_join(aux,tac_join(tac_create(TAC_VECDEC,node->child[1]->symbol,aux->result,0),aux2));
+        /* ELSE's and IF's */
+        case TREE_CMD_IF:
+            labelAux = make_label();
+            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
+                                                              children_tac[1]),
+                                                     tac_create(TAC_LABEL,labelAux,0,0)));
+        case TREE_CMD_IF_ELSE:
+            labelAux = make_label();
+            tempAux  = make_label();
+            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
+                                                              children_tac[1]),
+                                                     tac_join(tac_join(tac_create(TAC_JUMP,0,tempAux,0),
+                                                                       tac_create(TAC_LABEL,labelAux,0,0)),
+                                                              tac_join(children_tac[2],
+                                                                       tac_create(TAC_LABEL,tempAux,0,0)))));
+        case TREE_CMD_FOR:
+            labelAux = make_label();
+            tempAux  = make_label();
+                return tac_join(tac_create(TAC_LABEL,labelAux,0,0),
+                                tac_join(tac_join(children_tac[0],
+                                                  tac_create(TAC_IFZ,tempAux, children_tac[0]->result,0)),
+                                         tac_join(children_tac[1],
+                                                  tac_join(tac_create(TAC_JUMP,labelAux,0,0),
+                                                           tac_create(TAC_LABEL,tempAux,0,0)))));
+        case TREE_CMD_FOR_TO:
+            labelAux = make_label();
+            tempAux = make_label();
+            temp_var = make_temp();
+            return tac_join(tac_join(children_tac[1], tac_create(TAC_ATTR_SCALAR, children_tac[0]->result, children_tac[1]->result, 0)), tac_join(tac_create(TAC_LABEL,labelAux,0,0),
+                                           tac_join( children_tac[2],
+                                           tac_join( tac_create(TAC_L, temp_var,children_tac[0]->result, children_tac[2]->result),
 
-        case TREE_DECLARATION_VEC_NOLIT:
-            return tac_join(children_tac[2], tac_create(TAC_VECDEC,node->child[1]->symbol,children_tac[2]->result,0));
-        */
+                  tac_join(tac_create(TAC_IFZ,tempAux,temp_var,0), tac_join( children_tac[3], tac_join(tac_create(TAC_JUMP,labelAux,0,0),
+                             tac_create(TAC_LABEL,tempAux,0,0))))))));
+
+
+            break;
+
+
+
+
+
+
+
         /*Function calls */
         case TREE_EXP_FUNC_CALL:
             labelAux = make_label();
@@ -301,33 +347,7 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_DEC_FUC_PARAM_TAIL:
             return tac_create(TAC_POP_ARGS,node->child[1]->symbol,0,0);
 
-        /* ELSE's and IF's */
-            case TREE_CMD_IF:
-                labelAux = make_label();
-                return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
-                                                                  children_tac[1]),
-                                                         tac_create(TAC_LABEL,labelAux,0,0)));
-            case TREE_CMD_IF_ELSE:
-                labelAux = make_label();
-                tempAux  = make_label();
-                return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
-                                                                  children_tac[1]),
-                                                         tac_join(tac_join(tac_create(TAC_JUMP,0,tempAux,0),
-                                                                           tac_create(TAC_LABEL,labelAux,0,0)),
-                                                                  tac_join(children_tac[2],
-                                                                           tac_create(TAC_LABEL,tempAux,0,0)))));
-            case TREE_CMD_FOR:
-                labelAux = make_label();
-                tempAux  = make_label();
-                    return tac_join(tac_create(TAC_LABEL,labelAux,0,0),
-                                    tac_join(tac_join(children_tac[0],
-                                                      tac_create(TAC_IFZ,children_tac[0]->result,tempAux,0)),
-                                             tac_join(children_tac[1],
-                                                      tac_join(tac_create(TAC_JUMP,labelAux,0,0),
-                                                               tac_create(TAC_LABEL,tempAux,0,0)))));
-            case TREE_CMD_FOR_TO:
-                //não sei comofas;
-                break;
+
 
 
 

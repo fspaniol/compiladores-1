@@ -43,7 +43,6 @@ HASHCELL* addHash(char *key, int type) {
   int address;
   if(!inited)
     initHash();
-  printf("adding to hash %s \n", key);
   HASHCELL *ptr;
   address = hashFunction(key);
   ptr = getHASHCELL(key);
