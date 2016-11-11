@@ -241,6 +241,10 @@ TAC* gen_tac(TREENODE *node) {
             return children_tac[0];
         case TREE_CMD_READ:
             return tac_create(TAC_READ, NULL, children_tac[0]->result,NULL);
+        case TREE_CMD_LIST_HEAD:
+            return tac_join(children_tac[0], children_tac[1]);
+        case TREE_CMD_LIST_TAIL:
+            return children_tac[0];
 
         /* print command*/
         case TREE_CMD_PRINT:
@@ -324,31 +328,6 @@ TAC* gen_tac(TREENODE *node) {
             case TREE_CMD_FOR_TO:
                 //não sei comofas;
                 break;
-                // TENHO DÚVIDAS SE ESTÁ CORRETO. MAIS DÚVIDAS QUE CERTEZA. :(
-          /*  case TREE_DEC_VAR_VEC_LIT_LIST_HEAD:
-              buffer = calloc(64, sizeof(char));
-              sprintf(buffer, "%d", initVector++);
-              printf("\n\nBUFFER DA HEAD %s\n\n", buffer);
-              exit(1);
-              addHash(buffer, SYMBOL_IDENTIFIER);
-              labelAux = getHash(buffer);
-              labelAux->datatype = DATATYPE_INT;
-              free(buffer);
-              TAC* childAux = gen_tac(node->child[0]);
-              TAC* childAux2 = gen_tac(node->child[1]);
-
-               return tac_join(childAux,
-                              tac_join(tac_create(TAC_TO_VEC_MOVE,hashVector,labelAux,childAux->result),
-                                        childAux2));
-
-            case TREE_DEC_VAR_VEC_LIT_LIST_TAIL:
-                buffer = calloc(64, sizeof(char));
-                sprintf(buffer, "%d", initVector++);
-                labelAux = addHash(buffer, SYMBOL_IDENTIFIER);
-                labelAux->datatype = DATATYPE_INT;
-                TAC* childAux3 = gen_tac(node->child[0]);
-                free(buffer);
-                 return tac_create(TAC_TO_VEC_MOVE, hashVector,labelAux,childAux3->result);  */
 
 
 
