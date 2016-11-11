@@ -1,0 +1,9 @@
+int a : 0;
+float x : 1;
+char c : 'a';
+
+int main ()
+{
+    x = a + c;
+    a = (a * a) / (a - x);
+};
