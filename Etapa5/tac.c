@@ -63,19 +63,17 @@ void tac_print(TAC * tac) {
   case TAC_BEGINFUNC     : printf("TAC_BEGIN_FUN : ");       break;
   case TAC_ENDFUNC       : printf("TAC_END_FUN : ");     break;
   case TAC_IFZ          : printf("TAC_IFZ : ");         break;
-  case TAC_READ        : printf("TAC_INPUT : ");       break;
-  case TAC_PRINT       : printf("TAC_OUTPUT : ");      break;
+  case TAC_READ        : printf("TAC_READ : ");       break;
+  case TAC_PRINT       : printf("TAC_PRINT : ");      break;
   case TAC_RETURN       : printf("TAC_RETURN : ");      break;
   case TAC_JUMP         : printf("TAC_JUMP : ");        break;
   case TAC_VARDEC       : printf("TAC_VARDEC : ");      break;
   case TAC_VECDEC       : printf("TAC_VECDEC : ");      break;
-//  case TAC_TO_VEC_MOVE      : printf("TAC_TO_VEC_MOVE : ");     break;
-//  case TAC_FROM_VEC_MOVE    : printf("TAC_FROM_VEC_MOVE : ");   break;
   case TAC_CALL         : printf("TAC_CALL : ");        break;
   case TAC_PUSH_ARGS      : printf("TAC_PUSH : ");        break;
   case TAC_POP_ARGS       : printf("TAC_POP : ");         break;
-case TAC_ATTR_SCALAR: printf("TAC_ATTR_SCALAR: ");break;
-case TAC_ATTR_VEC: printf("TAC_ATTR_VEC: ");break;
+  case TAC_ATTR_SCALAR: printf("TAC_ATTR_SCALAR: ");break;
+  case TAC_ATTR_VEC: printf("TAC_ATTR_VEC: ");break;
   default           : printf("TAC_%d <!!!> : ", tac->tac_code); break;
   }
 
@@ -261,7 +259,7 @@ TAC* gen_tac(TREENODE *node) {
 
             return children_tac[0];
         case TREE_CMD_READ:
-            return tac_create(TAC_READ, NULL, children_tac[0]->result,NULL);
+            return tac_create(TAC_READ, children_tac[0]->result,NULL,NULL);
         case TREE_CMD_LIST_HEAD:
             return tac_join(children_tac[0], children_tac[1]);
         case TREE_CMD_LIST_TAIL:
