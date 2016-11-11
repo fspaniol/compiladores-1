@@ -222,6 +222,9 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_EXP_OP_BINARY:
             return gen_tac_exp_binary_op(node, children_tac);
 
+        case TREE_EXP_BRACKET_ENCLOSURE:
+            return children_tac[0];
+
         /* arithmetic/logical operators. handled at
          * gen_tac_exp_binary_op. can ignore*/
         case TREE_ADD:
@@ -243,7 +246,9 @@ TAC* gen_tac(TREENODE *node) {
         case TREE_DECLARATION_SCALAR:
         case TREE_DECLARATION_VEC_LIT:
         case TREE_DECLARATION_VEC_NOLIT:
-            return NULL;
+        case TREE_DEC_VAR_VEC_LIT_LIST_HEAD:
+        case TREE_DEC_VAR_VEC_LIT_LIST_TAIL:
+            break;
 
         /* type reserved words: does nothing */
         case TREE_KW_INTEGER:
