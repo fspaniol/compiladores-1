@@ -193,14 +193,16 @@ int getExpDataType(TREENODE *node) {
         return DATATYPE_BOOL;
     
     else if ((node->type == TREE_EXP_OP_BINARY) && (node->child[1] != NULL)) {
-        int datatype = checkDataTypes(getExpDataType(node->child[0]), getExpDataType(node->child[2]));
+        int datatype_child0 = getExpDataType(node->child[0]);
+        int datatype_child2 = getExpDataType(node->child[2]);
+        int datatype = checkDataTypes(datatype_child0, datatype_child2);
         switch(node->child[1]->type){
             case TREE_ADD:
             case TREE_SUB:
             case TREE_DIV:
             case TREE_MUL:
                 if (datatype == 0 )
-                    return(getExpDataType(node->child[0]));
+                    return(datatype_child0);
                 else if (datatype > 0)
                     return datatype;
                 else {
@@ -251,6 +253,7 @@ int check_print_list(TREENODE *node) {
             if(type != DATATYPE_INT && type != DATATYPE_CHAR && type != DATATYPE_FLOAT) {
                 //invalid expression type
                 printf("ERROR: Invalid expression type on print command on line %d. type is %d\n", node->linenumber, type);
+                printf("type is %d \n", type);
                 exit(4);
             }
         }
