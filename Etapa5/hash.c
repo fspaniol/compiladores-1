@@ -46,14 +46,12 @@ HASHCELL* addHash(char *key, int type) {
   printf("adding to hash %s \n", key);
   HASHCELL *ptr;
   address = hashFunction(key);
-  printf("hash0\n");
   ptr = getHASHCELL(key);
-  printf("hash0.1\n");
   if(ptr!=NULL)
     return ptr;
-  printf("hash1\n");
+
   HASHCELL *cell = (HASHCELL*) calloc(sizeof(HASHCELL), 1);
-  printf("hash2\n");
+
   cell->type = type;
   cell->datatype = -1;
   cell->next = NULL;

@@ -60,13 +60,15 @@ typedef struct tac {
     HASHCELL *op1;
     HASHCELL *op2;
     struct tac *next;
+    struct tac *prev;
 } TAC;
 
 TAC* tac_create(int tac_code, HASHCELL *result,HASHCELL *op1, HASHCELL *op2);
 void print_tac_list(TAC *tc);
-void tac_print_single(TAC * tac);
+void tac_print(TAC * tac);
 TAC* tac_join(TAC *dest, TAC *src);
 TAC* gen_tac(TREENODE *node);
+TAC* invert_tac_list(TAC *tc);
 
 HASHCELL* make_label();
 HASHCELL* make_temp();
