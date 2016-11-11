@@ -477,15 +477,22 @@ void setTypes(TREENODE *node) {
             node->child[1]->symbol->type = SYMBOL_IDENTIFIER_FUNCTION;
             node->child[1]->symbol->lineNumber = node->linenumber;
             
-            if(node->child[0]->type == TREE_KW_INTEGER)
+            if(node->child[0]->type == TREE_KW_INTEGER) {
                 node->child[1]->symbol->datatype = DATATYPE_INT;
-            else if (node->child[0]->type == TREE_KW_CHAR)
+
+            }
+            else if (node->child[0]->type == TREE_KW_CHAR) {
                 node->child[1]->symbol->datatype = DATATYPE_CHAR;
-            else if (node->child[0]->type == TREE_KW_FLOAT)
+
+            }
+            else if (node->child[0]->type == TREE_KW_FLOAT) {
                 node->child[1]->symbol->datatype = DATATYPE_FLOAT;
-            else if (node->child[0]->type == TREE_KW_BOOL)
+
+            }
+            else if (node->child[0]->type == TREE_KW_BOOL) {
                 node->child[1]->symbol->datatype = DATATYPE_BOOL;
-            
+
+            }
             setTypes(node->child[2]);
             checkCommand(node->child[3], node->child[1]->symbol->datatype);
         }
@@ -494,15 +501,20 @@ void setTypes(TREENODE *node) {
     if ((node->type == TREE_DEC_FUC_PARAM_HEAD) || (node->type == TREE_DEC_FUC_PARAM_TAIL)){
         node->child[1]->symbol->lineNumber = node->linenumber;
         
-        if(node->child[0]->type == TREE_KW_INTEGER)
+        if(node->child[0]->type == TREE_KW_INTEGER) {
             node->child[1]->symbol->datatype = DATATYPE_INT;
-        else if (node->child[0]->type == TREE_KW_CHAR)
+            node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;
+        }
+        else if (node->child[0]->type == TREE_KW_CHAR) {
             node->child[1]->symbol->datatype = DATATYPE_CHAR;
-        else if (node->child[0]->type == TREE_KW_FLOAT)
+            node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;}
+        else if (node->child[0]->type == TREE_KW_FLOAT){
             node->child[1]->symbol->datatype = DATATYPE_FLOAT;
-        else if (node->child[0]->type == TREE_KW_BOOL)
+            node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;}
+        else if (node->child[0]->type == TREE_KW_BOOL){
             node->child[1]->symbol->datatype = DATATYPE_BOOL;
-        
+            node->child[1]->symbol->type = SYMBOL_IDENTIFIER_SCALAR;}
+
         if (node->type == TREE_DEC_FUC_PARAM_HEAD)
             setTypes(node->child[2]);
     }
