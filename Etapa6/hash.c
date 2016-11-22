@@ -54,6 +54,7 @@ HASHCELL* addHash(char *key, int type) {
   cell->type = type;
   cell->datatype = -1;
   cell->next = NULL;
+  cell->declared_at = NULL;
   char *keycpy = calloc(strlen(key)+1,1);
   strncpy(keycpy, key, strlen(key));
   cell->key = keycpy;
@@ -77,3 +78,5 @@ HASHCELL* getHash(char *key) {
   HASHCELL *ptr = getHASHCELL(key);
   return ptr;
 }
+
+

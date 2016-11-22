@@ -242,6 +242,8 @@ TAC* gen_tac(TREENODE *node) {
 
         /* Variable declarations: dont neet to create tacs*/
         case TREE_DECLARATION_SCALAR:
+
+        break;
         case TREE_DECLARATION_VEC_LIT:
         case TREE_DECLARATION_VEC_NOLIT:
         case TREE_DEC_VAR_VEC_LIT_LIST_HEAD:

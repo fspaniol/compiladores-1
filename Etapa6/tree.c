@@ -15,7 +15,6 @@ TREENODE* createNode(int type, HASHCELL *symbol, TREENODE *child1,TREENODE *chil
   node->child[3] = child4;
   node->linenumber = getLineNumber();
   return node;
-  
 }
 
 void printTree(TREENODE *node)

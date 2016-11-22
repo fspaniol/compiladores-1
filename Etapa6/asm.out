@@ -1,0 +1,35 @@
+	 .glbol a
+	 .data
+	 .size	a, 4
+a:
+	 .long	0
+
+
+	 .glbol b
+	 .data
+	 .size	b, 1
+b:
+	 .byte	39
+
+
+	 .glbol c
+	 .data
+	 .size	c, 4
+c:
+	 .long	20
+
+
+	 .glbol d
+	 .data
+	 .size	d, 1
+d:
+	 .byte	1
+
+
+	 .glbol e
+	 .data
+	 .size	e, 1
+e:
+	 .byte	0
+
+

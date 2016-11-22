@@ -5,6 +5,7 @@
     #include "tree.h"
     #include "semantic.h"
     #include "tac.h"
+    #include "asm.h"
         int getLineNumber();
         int yyerror();
         int yylex();
@@ -86,7 +87,7 @@
 
 %%
 rootnode
-    : program {$$ = $1; TREENODE *node = createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL); semanticAnalyser(node); TAC *gg= gen_tac(node); gg= invert_tac_list(gg);print_tac_list(gg);}
+    : program {$$ = $1; TREENODE *node = createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL); semanticAnalyser(node); TAC *gg= gen_tac(node); gg= invert_tac_list(gg);print_tac_list(gg);gen_asm();}
     ;
 program
     : declaration ';' program {$$ = createNode(TREE_DECLARATION, NULL, $1, $3, NULL, NULL);}
@@ -116,8 +117,8 @@ init_literal_list
 
 init_literal
     : integer  { $$ = $1;}
-    | LIT_FALSE    { $$ = createNode(TREE_FALSE, $1, NULL, NULL, NULL, NULL);}
-    | LIT_TRUE     { $$ = createNode(TREE_TRUE, $1, NULL, NULL, NULL, NULL);}
+    | LIT_FALSE    { $$ = createNode(TREE_FALSE, NULL, NULL, NULL, NULL, NULL);}
+    | LIT_TRUE     { $$ = createNode(TREE_TRUE, NULL, NULL, NULL, NULL, NULL);}
     | LIT_CHAR     { $$ = createNode(TREE_CHAR, $1, NULL, NULL, NULL, NULL);}
     ;
 
@@ -125,10 +126,10 @@ integer
     : LIT_INTEGER { $$ = createNode(TREE_INTEGER, $1, NULL, NULL, NULL, NULL);}
     ;
 declaration
-    : datatype identifier ':' init_literal { $$ = createNode(TREE_DECLARATION_SCALAR, NULL, $1, $2, $4, NULL);}
-    | datatype identifier '[' integer ']' ':' init_literal_list { $$ = createNode(TREE_DECLARATION_VEC_LIT, NULL, $1, $2, $4, $7);}
-    | datatype identifier '[' integer ']'           { $$ = createNode(TREE_DECLARATION_VEC_NOLIT, NULL, $1, $2, $4, NULL);}
-    | datatype identifier '(' params ')' cmdblock       { $$ = createNode(TREE_DECLARATION_FUC, NULL,  $1, $2, $4, $6);}
+    : datatype identifier ':' init_literal { TREENODE *temp = createNode(TREE_DECLARATION_SCALAR, NULL, $1, $2, $4, NULL); $$ = temp;((TREENODE*)$2)->symbol->declared_at = temp;}
+    | datatype identifier '[' integer ']' ':' init_literal_list { TREENODE *temp = createNode(TREE_DECLARATION_VEC_LIT, NULL, $1, $2, $4, $7); $$ = temp; ((TREENODE*)$2)->symbol->declared_at = temp;}
+    | datatype identifier '[' integer ']'           {  TREENODE *temp = createNode(TREE_DECLARATION_VEC_NOLIT, NULL, $1, $2, $4, NULL); $$ = temp; ((TREENODE*)$2)->symbol->declared_at = temp;}
+    | datatype identifier '(' params ')' cmdblock       { TREENODE *temp = createNode(TREE_DECLARATION_FUC, NULL,  $1, $2, $4, $6); $$ = temp; ((TREENODE*)$2)->symbol->declared_at = temp;}
     ;
 
 identifier

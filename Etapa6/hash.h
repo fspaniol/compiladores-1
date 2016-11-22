@@ -1,7 +1,6 @@
 #ifndef HASHCELLH
 #define HASHCELLH
 #define HASH_SIZE 997
-
 /* symbol types used for the type
 attribute */
 #define SYMBOL_LIT_INT 1
@@ -27,16 +26,29 @@ attribute*/
 #define DATATYPE_CHAR 16
 #define DATATYPE_BOOL 17
 
+
 typedef struct hashcell {
   char* key;
   int type;
   int datatype;
   int lineNumber;
   struct hashcell *next;
+  struct treenode *declared_at; //declared with struct
+            //keyword to avoid cyclic dependency
 }HASHCELL;
+
+HASHCELL* table[HASH_SIZE];
 
 //adds value to hash
 HASHCELL* addHash(char *key, int type);
 HASHCELL* getHash(char *key);
 int hashFunction(char *key);
+
+struct hash_row {
+    HASHCELL *first;
+    int current_row;
+};
+
+
+
 #endif

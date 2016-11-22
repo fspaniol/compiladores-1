@@ -1,0 +1,7 @@
+int a:0;
+char b:'a';
+float c:20;
+bool d:TRUE;
+bool e:FALSE;
+int main()
+{;};
