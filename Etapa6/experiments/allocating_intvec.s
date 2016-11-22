@@ -7,6 +7,7 @@
 a:
 	.long	2
 	.long	2
+	.comm	b,8,4
 	.section	.rodata
 .LC0:
 	.string	"%d"
@@ -16,7 +17,10 @@ a:
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movl	$a, %esi
+	movl	a+4(%rip), %edx
+	movl	b(%rip), %eax
+	addl	%edx, %eax
+	movl	%eax, %esi
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	printf

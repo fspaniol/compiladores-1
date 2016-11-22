@@ -166,10 +166,14 @@ int getExpDataType(TREENODE *node) {
             exit(4);
         }
         return(node->symbol->datatype);
-    } else if(node->type == TREE_CHAR)
+    } else if(node->type == TREE_CHAR) {
+        node->symbol->datatype = DATATYPE_CHAR;
         return(DATATYPE_CHAR);
-    else if(node->type == TREE_INTEGER)
+    }
+    else if(node->type == TREE_INTEGER) {
+        node->symbol->datatype = DATATYPE_INT;
         return(DATATYPE_INT);
+    }
     else if(node->type == TREE_EXP_VEC_INDEX) {
         //expression is vector[exp]
         //check if variable is declared

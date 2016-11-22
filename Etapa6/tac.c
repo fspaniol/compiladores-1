@@ -1,6 +1,7 @@
 #include "tac.h"
 #include "tree.h"
 #include "hash.h"
+#include "semantic.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -131,6 +132,7 @@ HASHCELL *make_temp()
 
 TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
     int tac_op = -1;
+    HASHCELL *temp;
     switch(node->child[1]->type) {
         case TREE_ADD:
             tac_op = TAC_ADD;
@@ -176,7 +178,20 @@ TAC* gen_tac_exp_binary_op(TREENODE *node, TAC **children_tac_array) {
         exit(5);
     }
     TAC *children_tacs = tac_join(children_tac_array[0],children_tac_array[2]);
-    TAC *tc = tac_create(tac_op, make_temp(),
+    int datatype_op = checkDataTypes(children_tac_array[0]->result->datatype,children_tac_array[2]->result->datatype);
+    if(datatype_op == -1 ) {
+        printf("Error during tac creation. binary exp operands have incompatble types\n");
+        printf("datatype 1 : %d\n",children_tac_array[0]->result->datatype);
+        printf("datatype 1 : %d\n",children_tac_array[2]->result->datatype);
+        printf("line:%d\n",node->linenumber);
+
+        exit(-1);
+    }
+    if(datatype_op == 0)
+        datatype_op =children_tac_array[0]->result->datatype;
+    temp = make_temp();
+    temp->datatype = datatype_op;
+    TAC *tc = tac_create(tac_op, temp,
                          children_tac_array[0] != NULL ? children_tac_array[0]->result : NULL,
                          children_tac_array[2] != NULL ? children_tac_array[2]->result : NULL);
     return tac_join(children_tacs, tc);

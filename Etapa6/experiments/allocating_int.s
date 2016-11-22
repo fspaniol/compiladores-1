@@ -1,14 +1,18 @@
 	.file	"allocating_int.c"
-
-
 	.globl	a
 	.data
 	.align 4
+	.type	a, @object
 	.size	a, 4
 a:
 	.long	34
-
-
+	.globl	b
+	.align 4
+	.type	b, @object
+	.size	b, 4
+b:
+	.long	33
+	.section	.rodata
 .LC0:
 	.string	"%d"
 	.text
