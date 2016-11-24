@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "hash.h"
 #include "tree.h"
+#include "tac.h"
 #include <string.h>
 #include <stdio.h>
 FILE *fout;
@@ -77,10 +78,11 @@ int gen_vec_var(HASHCELL *identifier) {
     }
 }
 
-void gen_asm() {
+void gen_asm(TAC *tacRev) {
     fout = fopen("asm.s","w");
     //generate variable declarations
     int hs_ind;
+    TAC* tac = invert_tac_list(tacRev);
     HASHCELL *scan;
     for(hs_ind = 0; hs_ind < HASH_SIZE; hs_ind++) {
         scan = table[hs_ind];
@@ -98,5 +100,39 @@ void gen_asm() {
             scan = scan->next;
         }
     }
+
+        printf("TESTEEEEE");
+
+    for(tac; tac != NULL; tac = tac->next){
+        switch(tac->tac_code){
+            case TAC_BEGINFUNC:
+                fprintf(fout,"\t.globl _%s\n", tac->result->key);
+                fprintf(fout,"\t.align  4, 0x90\n");
+                fprintf(fout,"_%s:\n", tac->result->key);
+                fprintf(fout,"\t\tpushq   %%rbp\n");
+                fprintf(fout,"\t\tmovq    %%rsp, %%rbp\n");
+                fprintf(fout,"\n");
+                break;
+
+            case TAC_ENDFUNC:
+                fprintf(fout,"  \tpopq     %%rbp\n");
+                fprintf(fout,"  \tretq\n");
+                fprintf(fout,"\n");
+                break;
+
+            /*case TAC_RETURN:
+                load("%eax", "%al", tac->result);
+                fprintf(fout,"    leave\n");
+                fprintf(fout,"    ret\n");
+                fprintf(fout,"\n");
+                break; 
+
+            case TAC_LABEL:
+                fprintf(fout,"  %s:\n", tac->result->key);
+                break; */
+
+            }
+        }
+    
 
 }
