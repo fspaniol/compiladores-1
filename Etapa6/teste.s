@@ -153,3 +153,7 @@ _temp6:
 	 .long	0
 
 
+ab:
+main:
+incn:
+voidfunc:

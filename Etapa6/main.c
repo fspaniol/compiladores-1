@@ -3,7 +3,7 @@
 #include "tree.h"
 #include "lex.yy.h"
 
-
+char *filename;
 
 int main(int argc, char** argv){
         initMe();
@@ -13,6 +13,7 @@ int main(int argc, char** argv){
         	exit(1);
         }
         if((argc==2 && (file = fopen(argv[1], "r"))) ) {
+                filename = argv[1];
 		yyin = file;
 		yyparse();
 	}

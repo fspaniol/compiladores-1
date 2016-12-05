@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include "hash.h"
 #include "tree.h"
+#include "tac.h"
 #include <string.h>
 #include <stdio.h>
 FILE *fout;
+char *filename;
+
 //generates code for int global variable
 int gen_scalar_var(HASHCELL *identifier) {
     //fprintf(fout,"\t .glbol %s\n",identifier->key);
@@ -77,8 +80,11 @@ int gen_vec_var(HASHCELL *identifier) {
     }
 }
 
-void gen_asm() {
-    fout = fopen("asm.s","w");
+void gen_asm(TAC *tac_list) {
+    char *name;
+    name = calloc(sizeof(char), strlen(filename)+3);
+    sprintf(name,"%s.s", filename);
+    fout = fopen(name,"w");
     //generate variable declarations
     int hs_ind;
     HASHCELL *scan;
@@ -98,5 +104,23 @@ void gen_asm() {
             scan = scan->next;
         }
     }
+    //read TAC
+    int tac_index = 0;
+    TAC *next_tac = tac_list;
+    while(next_tac!= NULL) {
+        switch(next_tac->tac_code) {
+            case TAC_BEGINFUNC:
+                fprintf(fout, "%s:\n",next_tac->result->key);
+                fprintf(fout, "\tpushq   %%rbp");
+                fprintf(fout, "\tmovq    %%rsp, %%rbp");
+
+
+                break;
+            default:
+                break;
+        }
+        next_tac = next_tac->next;
+    }
+
 
 }

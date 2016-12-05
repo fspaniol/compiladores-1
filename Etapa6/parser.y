@@ -87,7 +87,7 @@
 
 %%
 rootnode
-    : program {$$ = $1; TREENODE *node = createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL); semanticAnalyser(node); TAC *gg= gen_tac(node); gg= invert_tac_list(gg);print_tac_list(gg);gen_asm();}
+    : program {$$ = $1; TREENODE *node = createNode(TREE_DECLARATION, NULL, $1, NULL, NULL, NULL); semanticAnalyser(node); TAC *gg= gen_tac(node); gg= invert_tac_list(gg);print_tac_list(gg);gen_asm(gg);}
     ;
 program
     : declaration ';' program {$$ = createNode(TREE_DECLARATION, NULL, $1, $3, NULL, NULL);}
