@@ -1,5 +1,6 @@
 #include "stdio.h"
 int a;
 int main() {
-return;
+a = 4433/a;
+return 2;
 }

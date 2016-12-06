@@ -21,13 +21,18 @@ int gen_scalar_var(HASHCELL *identifier) {
     fprintf(fout, "\t .size\t%s, %d\n", identifier->key,size);
     fprintf(fout, "%s:\n", identifier->key);
     char *init_value;
-    if(identifier->declared_at != NULL && identifier->declared_at->child[2]->symbol != NULL)
-        init_value = identifier->declared_at->child[2]->symbol->key;
-    else {
-        buf[0] = '0';
-        buf[1] = '\0';
-        init_value = buf;
+    if(identifier->type == SYMBOL_CONST) {
+        sscanf(identifier->key,"_const%s", init_value);
+    } else {
+        if(identifier->declared_at != NULL && identifier->declared_at->child[2]->symbol != NULL)
+            init_value = identifier->declared_at->child[2]->symbol->key;
+        else {
+            buf[0] = '0';
+            buf[1] = '\0';
+            init_value = buf;
+        }
     }
+
     if(identifier->datatype == DATATYPE_INT || identifier->datatype == DATATYPE_FLOAT) {
         fprintf(fout, "\t .long\t%s\n",init_value);
     }
@@ -38,8 +43,6 @@ int gen_scalar_var(HASHCELL *identifier) {
         fprintf(fout, "\t .byte\t%d\n",identifier->declared_at->child[2]->type == TREE_TRUE ? 1 : 0);//to convert char to int
     fprintf(fout, "\n\n");
 }
-
-
 int gen_vec_var(HASHCELL *identifier) {
     TREENODE *declaration = identifier->declared_at;
     TREENODE *list, *list_element;
@@ -80,12 +83,12 @@ int gen_vec_var(HASHCELL *identifier) {
     }
 }
 
+
 void gen_asm(TAC *tac_list) {
     char *name;
     name = calloc(sizeof(char), strlen(filename)+3);
     sprintf(name,"%s.s", filename);
     fout = fopen(name,"w");
-    //generate variable declarations
     int hs_ind;
     HASHCELL *scan;
     for(hs_ind = 0; hs_ind < HASH_SIZE; hs_ind++) {
@@ -100,6 +103,10 @@ void gen_asm(TAC *tac_list) {
                     break;
                 case SYMBOL_CODEGEN_TEMP_VAR://temporary vars
                     gen_scalar_var(scan);
+                    break;
+                case SYMBOL_CONST:
+                    gen_scalar_var(scan);
+                    break;
             }
             scan = scan->next;
         }
@@ -110,13 +117,50 @@ void gen_asm(TAC *tac_list) {
     while(next_tac!= NULL) {
         switch(next_tac->tac_code) {
             case TAC_BEGINFUNC:
+                fprintf(fout,"\t.globl %s\n", next_tac->result->key);
+                fprintf(fout,"\t.type   %s, @function\n", next_tac->result->key);
                 fprintf(fout, "%s:\n",next_tac->result->key);
-                fprintf(fout, "\tpushq   %%rbp");
-                fprintf(fout, "\tmovq    %%rsp, %%rbp");
-
-
+                fprintf(fout, "\tpushq   %%rbp\n");
+                fprintf(fout, "\tmovq    %%rsp, %%rbp\n");
                 break;
-            default:
+            case TAC_ENDFUNC:
+                break;//probably nothing to do here
+            case TAC_RETURN:
+                if(next_tac->op1->type == SYMBOL_LIT_INT || next_tac->op1->type == SYMBOL_LIT_FLOAT || next_tac->op1->type == SYMBOL_LIT_CHAR)
+                    fprintf(fout, "\tmovl    $%s, %%eax\n",next_tac->op1->key);
+                else
+                    fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
+
+                fprintf(fout, "\tpopq    %%rbp\n");
+                fprintf(fout, "\tret\n");
+                break;
+            //arith ops
+            case TAC_ADD:
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
+                fprintf(fout, "\tmovl    %s(%%rip), %%edx\n",next_tac->op2->key);
+                fprintf(fout, "\taddl    %%edx, %%eax\n");
+                //fprintf(fout, "\tmovl    %%eax, %s\n",next_tac->result->key);
+                break;
+            case TAC_SUB:
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
+                fprintf(fout, "\tmovl    %s(%%rip), %%edx\n",next_tac->op2->key);
+                fprintf(fout, "\tsubl    %%edx, %%eax\n");
+                fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
+                break;
+            case TAC_MUL:
+                fprintf(fout, "\tmovl    %s(%%rip), %%ecx\n",next_tac->op1->key);
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op2->key);
+                fprintf(fout, "\tcltd\n");
+                fprintf(fout, "\tidivl    %%ecx\n");
+                fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
+                break;
+            case TAC_ATTR_SCALAR:
+                break;
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
+                fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
+                break;
+        default:
+
                 break;
         }
         next_tac = next_tac->next;

@@ -17,6 +17,7 @@ int ab (int a, int bX){
 
 int main()
   {
+  mat[0] = TRUE;
   for (i = 1 to 10)
     print i " ";
   g[20] = 19;
@@ -46,4 +47,4 @@ int incn (int x, int n) {
   return x + n;
   };
 
-int voidfunc() {;};
+int voidfunc() {return 3;};

@@ -14,7 +14,7 @@ int isRunning(void);
 int getLineNumber(void);
 void initMe(void);
 int yyerror();
-
+char *temp_point;
 %}
 
 
@@ -56,8 +56,8 @@ FALSE 				{return LIT_FALSE;}
 
 
 [A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = addHash(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
-[0-9]*				{yylval.symbol = addHash(yytext, SYMBOL_LIT_INT);return LIT_INTEGER;}
-\'.\'				{yylval.symbol = addHash(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;}
+[0-9]*				{temp_point =calloc(sizeof(char), strlen(yytext)+10); sprintf(temp_point,"_const%s", yytext); yylval.symbol = addHash(temp_point, SYMBOL_LIT_INT); yylval.symbol->datatype=DATATYPE_INT; yylval.symbol->type = SYMBOL_CONST; return LIT_INTEGER;}
+\'.\'				{yylval.symbol = addHash(yytext, SYMBOL_LIT_CHAR);yylval.symbol->datatype=DATATYPE_CHAR; yylval.symbol->type = SYMBOL_CONST;return LIT_CHAR;}
 [,;:\(\)\[\]\{\}+\-*/<>=!&$]   	{return yytext[0];}
 [ \t\f\v]
 \n 				{lines++;}

@@ -6,7 +6,12 @@
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	nop
+	movl	a(%rip), %ecx
+	movl	$4433, %eax
+	cltd
+	idivl	%ecx
+	movl	%eax, a(%rip)
+	movl	$2, %eax
 	popq	%rbp
 	ret
 	.size	main, .-main

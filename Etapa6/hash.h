@@ -17,6 +17,7 @@ attribute */
 /*symbols used for code generation*/
 #define SYMBOL_CODEGEN_LABEL 12
 #define SYMBOL_CODEGEN_TEMP_VAR 13
+#define SYMBOL_CONST 14
 
 
 /*datatypes. used in the datatype

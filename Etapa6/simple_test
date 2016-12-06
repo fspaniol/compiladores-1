@@ -1,0 +1,11 @@
+// UFRGS - Compiladores - Marcelo Johann - 2016/2 - Modificado
+
+int a:0;
+
+int main()
+{
+	a = 32 + a;
+
+        return a;
+
+};
