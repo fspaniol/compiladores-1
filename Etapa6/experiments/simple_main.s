@@ -1,17 +1,33 @@
 	.file	"simple_main.c"
-	.comm	a,4,4
+	.globl	a
+	.data
+	.align 4
+	.type	a, @object
+	.size	a, 4
+a:
+	.long	2
+	.globl	v
+	.align 4
+	.type	v, @object
+	.size	v, 4
+v:
+	.long	4
 	.text
 	.globl	main
 	.type	main, @function
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movl	a(%rip), %ecx
-	movl	$4433, %eax
-	cltd
-	idivl	%ecx
+	jmp	.L2
+.L3:
+	movl	a(%rip), %eax
+	subl	$1, %eax
 	movl	%eax, a(%rip)
-	movl	$2, %eax
+.L2:
+	movl	a(%rip), %eax
+	testl	%eax, %eax
+	jg	.L3
+	movl	a(%rip), %eax
 	popq	%rbp
 	ret
 	.size	main, .-main

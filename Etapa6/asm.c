@@ -3,29 +3,37 @@
 #include "tree.h"
 #include "tac.h"
 #include <string.h>
-#include <stdio.h>
+#include <stdlib.h>
 FILE *fout;
 char *filename;
+int data_flag_set = 0;
 
 //generates code for int global variable
 int gen_scalar_var(HASHCELL *identifier) {
-    //fprintf(fout,"\t .glbol %s\n",identifier->key);
-    //fprintf(fout,"\t .data\n");
+    if(!data_flag_set) {
+        fprintf(fout,"\t .data\n");
+        data_flag_set = 1;
+    }
     char buf[10];
     int size;
     if(identifier->datatype == DATATYPE_INT || identifier->datatype == DATATYPE_FLOAT)
         size = 4;
     if(identifier->datatype == DATATYPE_BOOL || identifier->datatype == DATATYPE_CHAR)
         size = 1;
+    fprintf(fout, "\t .globl\t%s\n", identifier->key);
     fprintf(fout, "\t .align %d\n", size);
+    fprintf(fout, "\t .type\t%s, @object\n", identifier->key);
     fprintf(fout, "\t .size\t%s, %d\n", identifier->key,size);
     fprintf(fout, "%s:\n", identifier->key);
     char *init_value;
     if(identifier->type == SYMBOL_CONST) {
+        init_value = calloc(1,20);
         sscanf(identifier->key,"_const%s", init_value);
     } else {
-        if(identifier->declared_at != NULL && identifier->declared_at->child[2]->symbol != NULL)
-            init_value = identifier->declared_at->child[2]->symbol->key;
+        if(identifier->declared_at != NULL && identifier->declared_at->child[2]->symbol != NULL){
+            //var initialized with constant removing constant tag
+            init_value = &(identifier->declared_at->child[2]->symbol->key[6]);
+        }
         else {
             buf[0] = '0';
             buf[1] = '\0';
@@ -139,7 +147,7 @@ void gen_asm(TAC *tac_list) {
                 fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
                 fprintf(fout, "\tmovl    %s(%%rip), %%edx\n",next_tac->op2->key);
                 fprintf(fout, "\taddl    %%edx, %%eax\n");
-                //fprintf(fout, "\tmovl    %%eax, %s\n",next_tac->result->key);
+                fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
                 break;
             case TAC_SUB:
                 fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
@@ -155,11 +163,21 @@ void gen_asm(TAC *tac_list) {
                 fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
                 break;
             case TAC_ATTR_SCALAR:
-                break;
                 fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
                 fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
                 break;
-        default:
+            case TAC_LABEL:
+                fprintf(fout, "%s:\n",next_tac->result->key);
+                break;
+            case TAC_IFZ:
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n", next_tac->op1->key);
+                fprintf(fout, "\ttestl    %%eax, %%eax\n");
+                fprintf(fout, "\tje    %s\n", next_tac->result->key);
+                break;
+            case TAC_JUMP:
+                fprintf(fout, "\tjmp %s\n", next_tac->result->key);
+                break;
+            default:
 
                 break;
         }

@@ -305,15 +305,15 @@ TAC* gen_tac(TREENODE *node) {
         /* ELSE's and IF's */
         case TREE_CMD_IF:
             labelAux = make_label();
-            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
+            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,labelAux,children_tac[0]->result,0),
                                                               children_tac[1]),
                                                      tac_create(TAC_LABEL,labelAux,0,0)));
         case TREE_CMD_IF_ELSE:
             labelAux = make_label();
             tempAux  = make_label();
-            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,children_tac[0]->result,labelAux,0),
+            return tac_join(children_tac[0],tac_join(tac_join(tac_create(TAC_IFZ,labelAux,children_tac[0]->result,0),
                                                               children_tac[1]),
-                                                     tac_join(tac_join(tac_create(TAC_JUMP,0,tempAux,0),
+                                                     tac_join(tac_join(tac_create(TAC_JUMP,tempAux,0,0),
                                                                        tac_create(TAC_LABEL,labelAux,0,0)),
                                                               tac_join(children_tac[2],
                                                                        tac_create(TAC_LABEL,tempAux,0,0)))));

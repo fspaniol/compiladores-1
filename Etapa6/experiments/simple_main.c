@@ -1,6 +1,10 @@
 #include "stdio.h"
-int a;
+int a= 2;
+int v = 4;
 int main() {
-a = 4433/a;
-return 2;
+
+while(a>0)
+a--;
+
+return a;
 }
