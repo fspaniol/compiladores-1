@@ -18,15 +18,12 @@ v:
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	jmp	.L2
-.L3:
+	movl	v(%rip), %edx
 	movl	a(%rip), %eax
-	subl	$1, %eax
+	cmpl	%eax, %edx
+	setg	%al
+	movzbl	%al, %eax
 	movl	%eax, a(%rip)
-.L2:
-	movl	a(%rip), %eax
-	testl	%eax, %eax
-	jg	.L3
 	movl	a(%rip), %eax
 	popq	%rbp
 	ret

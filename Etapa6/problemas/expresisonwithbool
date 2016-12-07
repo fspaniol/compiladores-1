@@ -1,0 +1,11 @@
+// UFRGS - Compiladores - Marcelo Johann - 2016/2 - Modificado
+
+int a:0;
+bool b:TRUE;
+bool main()
+{
+	b = b && FALSE;
+
+        return b;
+
+};

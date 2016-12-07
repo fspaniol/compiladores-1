@@ -1,11 +1,20 @@
 // UFRGS - Compiladores - Marcelo Johann - 2016/2 - Modificado
 
 int a:0;
-
-int main()
+bool b:TRUE;
+int i:0;
+int  main()
 {
-	a = 32 + a;
-
-        return a;
+       for (i<10) {
+       a = a * i + 1;
+       i= i+1;
+       };
+	a = 10-12;
+	return a;
+	if(a >= 10) then  {
+		return a;
+	} else {
+         return 1;
+	};
 
 };

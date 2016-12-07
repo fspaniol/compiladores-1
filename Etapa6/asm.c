@@ -16,9 +16,9 @@ int gen_scalar_var(HASHCELL *identifier) {
     }
     char buf[10];
     int size;
-    if(identifier->datatype == DATATYPE_INT || identifier->datatype == DATATYPE_FLOAT)
+    if(identifier->datatype == DATATYPE_INT || identifier->datatype == DATATYPE_FLOAT || identifier->datatype == DATATYPE_BOOL)
         size = 4;
-    if(identifier->datatype == DATATYPE_BOOL || identifier->datatype == DATATYPE_CHAR)
+    if(identifier->datatype == DATATYPE_CHAR)
         size = 1;
     fprintf(fout, "\t .globl\t%s\n", identifier->key);
     fprintf(fout, "\t .align %d\n", size);
@@ -48,7 +48,7 @@ int gen_scalar_var(HASHCELL *identifier) {
         fprintf(fout, "\t .byte\t%d\n",init_value[0]);//to convert char to int
     }
     if(identifier->datatype == DATATYPE_BOOL)
-        fprintf(fout, "\t .byte\t%d\n",identifier->declared_at->child[2]->type == TREE_TRUE ? 1 : 0);//to convert char to int
+        fprintf(fout, "\t .long\t%d\n",identifier->declared_at->child[2]->type == TREE_TRUE ? 1 : 0);//to convert char to int
     fprintf(fout, "\n\n");
 }
 int gen_vec_var(HASHCELL *identifier) {
@@ -91,6 +91,35 @@ int gen_vec_var(HASHCELL *identifier) {
     }
 }
 
+void gen_asm_comp(TAC *next_tac){
+    fprintf(fout, "\tmovl    %s(%%rip), %%edx\n", next_tac->op1->key);
+    fprintf(fout, "\tmovl    %s(%%rip), %%eax\n", next_tac->op2->key);
+    fprintf(fout, "\tcmpl    %%eax, %%edx\n");
+    switch(next_tac->tac_code){
+        case TAC_GE:
+            fprintf(fout, "\tsetge    %%al\n");
+            break;
+        case TAC_G:
+            fprintf(fout, "\tsetg    %%al\n");
+            break;
+        case TAC_LE:
+            fprintf(fout, "\tsetle    %%al\n");
+            break;
+        case TAC_L:
+            fprintf(fout, "\tsetl    %%al\n");
+            break;
+        case TAC_EQ:
+            fprintf(fout, "\tsete    %%al\n");
+            break;
+        case TAC_NE:
+            fprintf(fout, "\tsetne    %%al\n");
+            break;
+        default:
+            printf("unknown comparator\n");
+    }
+    fprintf(fout, "\tmovzbl  %%al, %%eax\n");
+    fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n", next_tac->result->key);
+}
 
 void gen_asm(TAC *tac_list) {
     char *name;
@@ -156,10 +185,9 @@ void gen_asm(TAC *tac_list) {
                 fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
                 break;
             case TAC_MUL:
-                fprintf(fout, "\tmovl    %s(%%rip), %%ecx\n",next_tac->op1->key);
-                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op2->key);
-                fprintf(fout, "\tcltd\n");
-                fprintf(fout, "\tidivl    %%ecx\n");
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n",next_tac->op1->key);
+                fprintf(fout, "\tmovl    %s(%%rip), %%edx\n",next_tac->op2->key);
+                fprintf(fout, "\timul    %%edx,%%eax\n");
                 fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n",next_tac->result->key);
                 break;
             case TAC_ATTR_SCALAR:
@@ -177,8 +205,25 @@ void gen_asm(TAC *tac_list) {
             case TAC_JUMP:
                 fprintf(fout, "\tjmp %s\n", next_tac->result->key);
                 break;
-            default:
 
+            case TAC_GE:
+            case TAC_G:
+            case TAC_LE:
+            case TAC_L:
+            case TAC_EQ:
+            case TAC_NE:
+                  gen_asm_comp(next_tac);
+                  break;
+            case TAC_AND:
+                fprintf(fout, "\tmovl    %s(%%rip), %%edx\n", next_tac->op1->key);
+                fprintf(fout, "\tmovl    %s(%%rip), %%eax\n", next_tac->op2->key);
+                fprintf(fout, "\tandl    %%edx, %%eax\n");
+                fprintf(fout, "\tmovl    %%eax, %s(%%rip)\n", next_tac->result->key);
+                break;
+
+
+            default:
+                printf("LOST TAC number %d\n", next_tac->tac_code);
                 break;
         }
         next_tac = next_tac->next;

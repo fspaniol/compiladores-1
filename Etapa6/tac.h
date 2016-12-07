@@ -28,8 +28,8 @@
 #define TAC_READ 		19
 #define TAC_PRINT		20	
 #define TAC_RETURN		21
-#define TAC_IF 			22
-#define TAC_IF_ELSE		23
+//#define TAC_IF 			22 not used
+//#define TAC_IF_ELSE		23 not used
 #define TAC_FOR 		24
 #define TAC_FOR_TO  	25
 
