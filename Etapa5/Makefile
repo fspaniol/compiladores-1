@@ -8,7 +8,7 @@
 #
 
 etapa: lex.yy.c y.tab.o main.o hash.o tree.o semantic.o tac.o
-	gcc -g -rdynamic -o etapa5 lex.yy.c y.tab.c main.o hash.o tree.o semantic.o tac.o
+	gcc -g -o etapa5 lex.yy.c y.tab.c main.o hash.o tree.o semantic.o tac.o
 
 lex.yy.c: scanner.l 
 	lex --header-file=lex.yy.h  scanner.l
