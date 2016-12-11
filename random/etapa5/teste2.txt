@@ -1,4 +1,0 @@
-int ab (int a, int bX){
-  a = 0;
-  return a + bX;
-};
