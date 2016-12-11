@@ -1,0 +1,1527 @@
+Terminals which are not used
+
+   TOKEN_ERROR
+   IF_SIMPLE
+
+
+State 54 conflicts: 1 shift/reduce
+State 105 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: rootnode $end
+
+    1 rootnode: program
+
+    2 program: declaration ';' program
+    3        | /* empty */
+
+    4 datatype: KW_INT
+    5         | KW_FLOAT
+    6         | KW_BOOL
+    7         | KW_CHAR
+
+    8 params: params_non_empty
+    9       | /* empty */
+
+   10 params_non_empty: datatype identifier ',' params_non_empty
+   11                 | datatype identifier
+
+   12 init_literal_list: init_literal
+   13                  | init_literal init_literal_list
+
+   14 init_literal: integer
+   15             | LIT_FALSE
+   16             | LIT_TRUE
+   17             | LIT_CHAR
+
+   18 integer: LIT_INTEGER
+
+   19 declaration: datatype identifier ':' init_literal
+   20            | datatype identifier '[' integer ']' ':' init_literal_list
+   21            | datatype identifier '[' integer ']'
+   22            | datatype identifier '(' params ')' cmdblock
+
+   23 identifier: TK_IDENTIFIER
+
+   24 cmd: KW_READ identifier
+   25    | KW_PRINT print_list
+   26    | KW_RETURN exp
+   27    | cmdblock
+   28    | identifier OPERATOR_ATTR exp
+   29    | identifier '[' exp ']' OPERATOR_ATTR exp
+   30    | KW_IF '(' exp ')' KW_THEN cmd
+   31    | KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd
+   32    | KW_FOR '(' exp ')' cmd
+   33    | KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd
+   34    | /* empty */
+
+   35 print_list: LIT_STRING print_list
+   36           | exp print_list
+   37           | LIT_STRING
+   38           | exp
+
+   39 cmdlist: cmd ';' cmdlist
+   40        | cmd ';'
+
+   41 cmdblock: '{' cmdlist '}'
+
+   42 operator: OPERATOR_LE
+   43         | OPERATOR_GE
+   44         | OPERATOR_EQ
+   45         | OPERATOR_NE
+   46         | OPERATOR_L
+   47         | OPERATOR_G
+   48         | OPERATOR_AND
+   49         | OPERATOR_OR
+   50         | OPERATOR_MUL
+   51         | OPERATOR_DIV
+   52         | OPERATOR_SUB
+   53         | OPERATOR_ADD
+
+   54 exp: identifier
+   55    | identifier '[' exp ']'
+   56    | integer
+   57    | LIT_CHAR
+   58    | exp operator exp
+   59    | '(' exp ')'
+   60    | identifier '(' argument_list ')'
+   61    | LIT_FALSE
+   62    | LIT_TRUE
+
+   63 argument_list: argument_list_non_empty
+   64              | /* empty */
+
+   65 argument_list_non_empty: exp ',' argument_list
+   66                        | exp
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 22 30 31 32 33 59 60
+')' (41) 22 30 31 32 33 59 60
+',' (44) 10 65
+':' (58) 19 20
+';' (59) 2 39 40
+'[' (91) 20 21 29 55
+']' (93) 20 21 29 55
+'{' (123) 41
+'}' (125) 41
+error (256)
+KW_INT (258) 4
+KW_FLOAT (259) 5
+KW_BOOL (260) 6
+KW_CHAR (261) 7
+KW_IF (262) 30 31
+KW_THEN (263) 30 31
+KW_ELSE (264) 31
+KW_FOR (265) 32 33
+KW_TO (266) 33
+KW_READ (267) 24
+KW_RETURN (268) 26
+KW_PRINT (269) 25
+OPERATOR_LE (270) 42
+OPERATOR_GE (271) 43
+OPERATOR_EQ (272) 44
+OPERATOR_NE (273) 45
+OPERATOR_AND (274) 48
+OPERATOR_OR (275) 49
+OPERATOR_L (276) 46
+OPERATOR_G (277) 47
+OPERATOR_ATTR (278) 28 29 33
+OPERATOR_MUL (279) 50
+OPERATOR_DIV (280) 51
+OPERATOR_SUB (281) 52
+OPERATOR_ADD (282) 53
+TK_IDENTIFIER (283) 23
+LIT_INTEGER (284) 18
+LIT_FALSE (285) 15 61
+LIT_TRUE (286) 16 62
+LIT_CHAR (287) 17 57
+LIT_STRING (288) 35 37
+TOKEN_ERROR (289)
+IF_SIMPLE (290)
+EXPRESSION (291)
+
+
+Nonterminals, with rules where they appear
+
+$accept (46)
+    on left: 0
+rootnode (47)
+    on left: 1, on right: 0
+program (48)
+    on left: 2 3, on right: 1 2
+datatype (49)
+    on left: 4 5 6 7, on right: 10 11 19 20 21 22
+params (50)
+    on left: 8 9, on right: 22
+params_non_empty (51)
+    on left: 10 11, on right: 8 10
+init_literal_list (52)
+    on left: 12 13, on right: 13 20
+init_literal (53)
+    on left: 14 15 16 17, on right: 12 13 19
+integer (54)
+    on left: 18, on right: 14 20 21 56
+declaration (55)
+    on left: 19 20 21 22, on right: 2
+identifier (56)
+    on left: 23, on right: 10 11 19 20 21 22 24 28 29 33 54 55 60
+cmd (57)
+    on left: 24 25 26 27 28 29 30 31 32 33 34, on right: 30 31 32 33
+    39 40
+print_list (58)
+    on left: 35 36 37 38, on right: 25 35 36
+cmdlist (59)
+    on left: 39 40, on right: 39 41
+cmdblock (60)
+    on left: 41, on right: 22 27
+operator (61)
+    on left: 42 43 44 45 46 47 48 49 50 51 52 53, on right: 58
+exp (62)
+    on left: 54 55 56 57 58 59 60 61 62, on right: 26 28 29 30 31 32
+    33 36 38 55 58 59 65 66
+argument_list (63)
+    on left: 63 64, on right: 60 65
+argument_list_non_empty (64)
+    on left: 65 66, on right: 63
+
+
+state 0
+
+    0 $accept: . rootnode $end
+
+    KW_INT    shift, and go to state 1
+    KW_FLOAT  shift, and go to state 2
+    KW_BOOL   shift, and go to state 3
+    KW_CHAR   shift, and go to state 4
+
+    $default  reduce using rule 3 (program)
+
+    rootnode     go to state 5
+    program      go to state 6
+    datatype     go to state 7
+    declaration  go to state 8
+
+
+state 1
+
+    4 datatype: KW_INT .
+
+    $default  reduce using rule 4 (datatype)
+
+
+state 2
+
+    5 datatype: KW_FLOAT .
+
+    $default  reduce using rule 5 (datatype)
+
+
+state 3
+
+    6 datatype: KW_BOOL .
+
+    $default  reduce using rule 6 (datatype)
+
+
+state 4
+
+    7 datatype: KW_CHAR .
+
+    $default  reduce using rule 7 (datatype)
+
+
+state 5
+
+    0 $accept: rootnode . $end
+
+    $end  shift, and go to state 9
+
+
+state 6
+
+    1 rootnode: program .
+
+    $default  reduce using rule 1 (rootnode)
+
+
+state 7
+
+   19 declaration: datatype . identifier ':' init_literal
+   20            | datatype . identifier '[' integer ']' ':' init_literal_list
+   21            | datatype . identifier '[' integer ']'
+   22            | datatype . identifier '(' params ')' cmdblock
+
+    TK_IDENTIFIER  shift, and go to state 10
+
+    identifier  go to state 11
+
+
+state 8
+
+    2 program: declaration . ';' program
+
+    ';'  shift, and go to state 12
+
+
+state 9
+
+    0 $accept: rootnode $end .
+
+    $default  accept
+
+
+state 10
+
+   23 identifier: TK_IDENTIFIER .
+
+    $default  reduce using rule 23 (identifier)
+
+
+state 11
+
+   19 declaration: datatype identifier . ':' init_literal
+   20            | datatype identifier . '[' integer ']' ':' init_literal_list
+   21            | datatype identifier . '[' integer ']'
+   22            | datatype identifier . '(' params ')' cmdblock
+
+    '('  shift, and go to state 13
+    '['  shift, and go to state 14
+    ':'  shift, and go to state 15
+
+
+state 12
+
+    2 program: declaration ';' . program
+
+    KW_INT    shift, and go to state 1
+    KW_FLOAT  shift, and go to state 2
+    KW_BOOL   shift, and go to state 3
+    KW_CHAR   shift, and go to state 4
+
+    $default  reduce using rule 3 (program)
+
+    program      go to state 16
+    datatype     go to state 7
+    declaration  go to state 8
+
+
+state 13
+
+   22 declaration: datatype identifier '(' . params ')' cmdblock
+
+    KW_INT    shift, and go to state 1
+    KW_FLOAT  shift, and go to state 2
+    KW_BOOL   shift, and go to state 3
+    KW_CHAR   shift, and go to state 4
+
+    $default  reduce using rule 9 (params)
+
+    datatype          go to state 17
+    params            go to state 18
+    params_non_empty  go to state 19
+
+
+state 14
+
+   20 declaration: datatype identifier '[' . integer ']' ':' init_literal_list
+   21            | datatype identifier '[' . integer ']'
+
+    LIT_INTEGER  shift, and go to state 20
+
+    integer  go to state 21
+
+
+state 15
+
+   19 declaration: datatype identifier ':' . init_literal
+
+    LIT_INTEGER  shift, and go to state 20
+    LIT_FALSE    shift, and go to state 22
+    LIT_TRUE     shift, and go to state 23
+    LIT_CHAR     shift, and go to state 24
+
+    init_literal  go to state 25
+    integer       go to state 26
+
+
+state 16
+
+    2 program: declaration ';' program .
+
+    $default  reduce using rule 2 (program)
+
+
+state 17
+
+   10 params_non_empty: datatype . identifier ',' params_non_empty
+   11                 | datatype . identifier
+
+    TK_IDENTIFIER  shift, and go to state 10
+
+    identifier  go to state 27
+
+
+state 18
+
+   22 declaration: datatype identifier '(' params . ')' cmdblock
+
+    ')'  shift, and go to state 28
+
+
+state 19
+
+    8 params: params_non_empty .
+
+    $default  reduce using rule 8 (params)
+
+
+state 20
+
+   18 integer: LIT_INTEGER .
+
+    $default  reduce using rule 18 (integer)
+
+
+state 21
+
+   20 declaration: datatype identifier '[' integer . ']' ':' init_literal_list
+   21            | datatype identifier '[' integer . ']'
+
+    ']'  shift, and go to state 29
+
+
+state 22
+
+   15 init_literal: LIT_FALSE .
+
+    $default  reduce using rule 15 (init_literal)
+
+
+state 23
+
+   16 init_literal: LIT_TRUE .
+
+    $default  reduce using rule 16 (init_literal)
+
+
+state 24
+
+   17 init_literal: LIT_CHAR .
+
+    $default  reduce using rule 17 (init_literal)
+
+
+state 25
+
+   19 declaration: datatype identifier ':' init_literal .
+
+    $default  reduce using rule 19 (declaration)
+
+
+state 26
+
+   14 init_literal: integer .
+
+    $default  reduce using rule 14 (init_literal)
+
+
+state 27
+
+   10 params_non_empty: datatype identifier . ',' params_non_empty
+   11                 | datatype identifier .
+
+    ','  shift, and go to state 30
+
+    $default  reduce using rule 11 (params_non_empty)
+
+
+state 28
+
+   22 declaration: datatype identifier '(' params ')' . cmdblock
+
+    '{'  shift, and go to state 31
+
+    cmdblock  go to state 32
+
+
+state 29
+
+   20 declaration: datatype identifier '[' integer ']' . ':' init_literal_list
+   21            | datatype identifier '[' integer ']' .
+
+    ':'  shift, and go to state 33
+
+    $default  reduce using rule 21 (declaration)
+
+
+state 30
+
+   10 params_non_empty: datatype identifier ',' . params_non_empty
+
+    KW_INT    shift, and go to state 1
+    KW_FLOAT  shift, and go to state 2
+    KW_BOOL   shift, and go to state 3
+    KW_CHAR   shift, and go to state 4
+
+    datatype          go to state 17
+    params_non_empty  go to state 34
+
+
+state 31
+
+   41 cmdblock: '{' . cmdlist '}'
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 41
+    cmdlist     go to state 42
+    cmdblock    go to state 43
+
+
+state 32
+
+   22 declaration: datatype identifier '(' params ')' cmdblock .
+
+    $default  reduce using rule 22 (declaration)
+
+
+state 33
+
+   20 declaration: datatype identifier '[' integer ']' ':' . init_literal_list
+
+    LIT_INTEGER  shift, and go to state 20
+    LIT_FALSE    shift, and go to state 22
+    LIT_TRUE     shift, and go to state 23
+    LIT_CHAR     shift, and go to state 24
+
+    init_literal_list  go to state 44
+    init_literal       go to state 45
+    integer            go to state 26
+
+
+state 34
+
+   10 params_non_empty: datatype identifier ',' params_non_empty .
+
+    $default  reduce using rule 10 (params_non_empty)
+
+
+state 35
+
+   30 cmd: KW_IF . '(' exp ')' KW_THEN cmd
+   31    | KW_IF . '(' exp ')' KW_THEN cmd KW_ELSE cmd
+
+    '('  shift, and go to state 46
+
+
+state 36
+
+   32 cmd: KW_FOR . '(' exp ')' cmd
+   33    | KW_FOR . '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd
+
+    '('  shift, and go to state 47
+
+
+state 37
+
+   24 cmd: KW_READ . identifier
+
+    TK_IDENTIFIER  shift, and go to state 10
+
+    identifier  go to state 48
+
+
+state 38
+
+   26 cmd: KW_RETURN . exp
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 55
+
+
+state 39
+
+   25 cmd: KW_PRINT . print_list
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    LIT_STRING     shift, and go to state 56
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    print_list  go to state 57
+    exp         go to state 58
+
+
+state 40
+
+   28 cmd: identifier . OPERATOR_ATTR exp
+   29    | identifier . '[' exp ']' OPERATOR_ATTR exp
+
+    OPERATOR_ATTR  shift, and go to state 59
+    '['            shift, and go to state 60
+
+
+state 41
+
+   39 cmdlist: cmd . ';' cmdlist
+   40        | cmd . ';'
+
+    ';'  shift, and go to state 61
+
+
+state 42
+
+   41 cmdblock: '{' cmdlist . '}'
+
+    '}'  shift, and go to state 62
+
+
+state 43
+
+   27 cmd: cmdblock .
+
+    $default  reduce using rule 27 (cmd)
+
+
+state 44
+
+   20 declaration: datatype identifier '[' integer ']' ':' init_literal_list .
+
+    $default  reduce using rule 20 (declaration)
+
+
+state 45
+
+   12 init_literal_list: init_literal .
+   13                  | init_literal . init_literal_list
+
+    LIT_INTEGER  shift, and go to state 20
+    LIT_FALSE    shift, and go to state 22
+    LIT_TRUE     shift, and go to state 23
+    LIT_CHAR     shift, and go to state 24
+
+    $default  reduce using rule 12 (init_literal_list)
+
+    init_literal_list  go to state 63
+    init_literal       go to state 45
+    integer            go to state 26
+
+
+state 46
+
+   30 cmd: KW_IF '(' . exp ')' KW_THEN cmd
+   31    | KW_IF '(' . exp ')' KW_THEN cmd KW_ELSE cmd
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 64
+
+
+state 47
+
+   32 cmd: KW_FOR '(' . exp ')' cmd
+   33    | KW_FOR '(' . identifier OPERATOR_ATTR exp KW_TO exp ')' cmd
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 65
+    exp         go to state 66
+
+
+state 48
+
+   24 cmd: KW_READ identifier .
+
+    $default  reduce using rule 24 (cmd)
+
+
+state 49
+
+   61 exp: LIT_FALSE .
+
+    $default  reduce using rule 61 (exp)
+
+
+state 50
+
+   62 exp: LIT_TRUE .
+
+    $default  reduce using rule 62 (exp)
+
+
+state 51
+
+   57 exp: LIT_CHAR .
+
+    $default  reduce using rule 57 (exp)
+
+
+state 52
+
+   59 exp: '(' . exp ')'
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 67
+
+
+state 53
+
+   56 exp: integer .
+
+    $default  reduce using rule 56 (exp)
+
+
+state 54
+
+   54 exp: identifier .
+   55    | identifier . '[' exp ']'
+   60    | identifier . '(' argument_list ')'
+
+    '('  shift, and go to state 68
+    '['  shift, and go to state 69
+
+    '('       [reduce using rule 54 (exp)]
+    $default  reduce using rule 54 (exp)
+
+
+state 55
+
+   26 cmd: KW_RETURN exp .
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+
+    $default  reduce using rule 26 (cmd)
+
+    operator  go to state 82
+
+
+state 56
+
+   35 print_list: LIT_STRING . print_list
+   37           | LIT_STRING .
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    LIT_STRING     shift, and go to state 56
+    '('            shift, and go to state 52
+
+    $default  reduce using rule 37 (print_list)
+
+    integer     go to state 53
+    identifier  go to state 54
+    print_list  go to state 83
+    exp         go to state 58
+
+
+state 57
+
+   25 cmd: KW_PRINT print_list .
+
+    $default  reduce using rule 25 (cmd)
+
+
+state 58
+
+   36 print_list: exp . print_list
+   38           | exp .
+   58 exp: exp . operator exp
+
+    OPERATOR_LE    shift, and go to state 70
+    OPERATOR_GE    shift, and go to state 71
+    OPERATOR_EQ    shift, and go to state 72
+    OPERATOR_NE    shift, and go to state 73
+    OPERATOR_AND   shift, and go to state 74
+    OPERATOR_OR    shift, and go to state 75
+    OPERATOR_L     shift, and go to state 76
+    OPERATOR_G     shift, and go to state 77
+    OPERATOR_MUL   shift, and go to state 78
+    OPERATOR_DIV   shift, and go to state 79
+    OPERATOR_SUB   shift, and go to state 80
+    OPERATOR_ADD   shift, and go to state 81
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    LIT_STRING     shift, and go to state 56
+    '('            shift, and go to state 52
+
+    $default  reduce using rule 38 (print_list)
+
+    integer     go to state 53
+    identifier  go to state 54
+    print_list  go to state 84
+    operator    go to state 82
+    exp         go to state 58
+
+
+state 59
+
+   28 cmd: identifier OPERATOR_ATTR . exp
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 85
+
+
+state 60
+
+   29 cmd: identifier '[' . exp ']' OPERATOR_ATTR exp
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 86
+
+
+state 61
+
+   39 cmdlist: cmd ';' . cmdlist
+   40        | cmd ';' .
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    '}'       reduce using rule 40 (cmdlist)
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 41
+    cmdlist     go to state 87
+    cmdblock    go to state 43
+
+
+state 62
+
+   41 cmdblock: '{' cmdlist '}' .
+
+    $default  reduce using rule 41 (cmdblock)
+
+
+state 63
+
+   13 init_literal_list: init_literal init_literal_list .
+
+    $default  reduce using rule 13 (init_literal_list)
+
+
+state 64
+
+   30 cmd: KW_IF '(' exp . ')' KW_THEN cmd
+   31    | KW_IF '(' exp . ')' KW_THEN cmd KW_ELSE cmd
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ')'           shift, and go to state 88
+
+    operator  go to state 82
+
+
+state 65
+
+   33 cmd: KW_FOR '(' identifier . OPERATOR_ATTR exp KW_TO exp ')' cmd
+   54 exp: identifier .
+   55    | identifier . '[' exp ']'
+   60    | identifier . '(' argument_list ')'
+
+    OPERATOR_ATTR  shift, and go to state 89
+    '('            shift, and go to state 68
+    '['            shift, and go to state 69
+
+    $default  reduce using rule 54 (exp)
+
+
+state 66
+
+   32 cmd: KW_FOR '(' exp . ')' cmd
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ')'           shift, and go to state 90
+
+    operator  go to state 82
+
+
+state 67
+
+   58 exp: exp . operator exp
+   59    | '(' exp . ')'
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ')'           shift, and go to state 91
+
+    operator  go to state 82
+
+
+state 68
+
+   60 exp: identifier '(' . argument_list ')'
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    $default  reduce using rule 64 (argument_list)
+
+    integer                  go to state 53
+    identifier               go to state 54
+    exp                      go to state 92
+    argument_list            go to state 93
+    argument_list_non_empty  go to state 94
+
+
+state 69
+
+   55 exp: identifier '[' . exp ']'
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 95
+
+
+state 70
+
+   42 operator: OPERATOR_LE .
+
+    $default  reduce using rule 42 (operator)
+
+
+state 71
+
+   43 operator: OPERATOR_GE .
+
+    $default  reduce using rule 43 (operator)
+
+
+state 72
+
+   44 operator: OPERATOR_EQ .
+
+    $default  reduce using rule 44 (operator)
+
+
+state 73
+
+   45 operator: OPERATOR_NE .
+
+    $default  reduce using rule 45 (operator)
+
+
+state 74
+
+   48 operator: OPERATOR_AND .
+
+    $default  reduce using rule 48 (operator)
+
+
+state 75
+
+   49 operator: OPERATOR_OR .
+
+    $default  reduce using rule 49 (operator)
+
+
+state 76
+
+   46 operator: OPERATOR_L .
+
+    $default  reduce using rule 46 (operator)
+
+
+state 77
+
+   47 operator: OPERATOR_G .
+
+    $default  reduce using rule 47 (operator)
+
+
+state 78
+
+   50 operator: OPERATOR_MUL .
+
+    $default  reduce using rule 50 (operator)
+
+
+state 79
+
+   51 operator: OPERATOR_DIV .
+
+    $default  reduce using rule 51 (operator)
+
+
+state 80
+
+   52 operator: OPERATOR_SUB .
+
+    $default  reduce using rule 52 (operator)
+
+
+state 81
+
+   53 operator: OPERATOR_ADD .
+
+    $default  reduce using rule 53 (operator)
+
+
+state 82
+
+   58 exp: exp operator . exp
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 96
+
+
+state 83
+
+   35 print_list: LIT_STRING print_list .
+
+    $default  reduce using rule 35 (print_list)
+
+
+state 84
+
+   36 print_list: exp print_list .
+
+    $default  reduce using rule 36 (print_list)
+
+
+state 85
+
+   28 cmd: identifier OPERATOR_ATTR exp .
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+
+    $default  reduce using rule 28 (cmd)
+
+    operator  go to state 82
+
+
+state 86
+
+   29 cmd: identifier '[' exp . ']' OPERATOR_ATTR exp
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ']'           shift, and go to state 97
+
+    operator  go to state 82
+
+
+state 87
+
+   39 cmdlist: cmd ';' cmdlist .
+
+    $default  reduce using rule 39 (cmdlist)
+
+
+state 88
+
+   30 cmd: KW_IF '(' exp ')' . KW_THEN cmd
+   31    | KW_IF '(' exp ')' . KW_THEN cmd KW_ELSE cmd
+
+    KW_THEN  shift, and go to state 98
+
+
+state 89
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR . exp KW_TO exp ')' cmd
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 99
+
+
+state 90
+
+   32 cmd: KW_FOR '(' exp ')' . cmd
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 100
+    cmdblock    go to state 43
+
+
+state 91
+
+   59 exp: '(' exp ')' .
+
+    $default  reduce using rule 59 (exp)
+
+
+state 92
+
+   58 exp: exp . operator exp
+   65 argument_list_non_empty: exp . ',' argument_list
+   66                        | exp .
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ','           shift, and go to state 101
+
+    $default  reduce using rule 66 (argument_list_non_empty)
+
+    operator  go to state 82
+
+
+state 93
+
+   60 exp: identifier '(' argument_list . ')'
+
+    ')'  shift, and go to state 102
+
+
+state 94
+
+   63 argument_list: argument_list_non_empty .
+
+    $default  reduce using rule 63 (argument_list)
+
+
+state 95
+
+   55 exp: identifier '[' exp . ']'
+   58    | exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ']'           shift, and go to state 103
+
+    operator  go to state 82
+
+
+state 96
+
+   58 exp: exp . operator exp
+   58    | exp operator exp .
+
+    $default  reduce using rule 58 (exp)
+
+    operator  go to state 82
+
+
+state 97
+
+   29 cmd: identifier '[' exp ']' . OPERATOR_ATTR exp
+
+    OPERATOR_ATTR  shift, and go to state 104
+
+
+state 98
+
+   30 cmd: KW_IF '(' exp ')' KW_THEN . cmd
+   31    | KW_IF '(' exp ')' KW_THEN . cmd KW_ELSE cmd
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 105
+    cmdblock    go to state 43
+
+
+state 99
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR exp . KW_TO exp ')' cmd
+   58 exp: exp . operator exp
+
+    KW_TO         shift, and go to state 106
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+
+    operator  go to state 82
+
+
+state 100
+
+   32 cmd: KW_FOR '(' exp ')' cmd .
+
+    $default  reduce using rule 32 (cmd)
+
+
+state 101
+
+   65 argument_list_non_empty: exp ',' . argument_list
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    $default  reduce using rule 64 (argument_list)
+
+    integer                  go to state 53
+    identifier               go to state 54
+    exp                      go to state 92
+    argument_list            go to state 107
+    argument_list_non_empty  go to state 94
+
+
+state 102
+
+   60 exp: identifier '(' argument_list ')' .
+
+    $default  reduce using rule 60 (exp)
+
+
+state 103
+
+   55 exp: identifier '[' exp ']' .
+
+    $default  reduce using rule 55 (exp)
+
+
+state 104
+
+   29 cmd: identifier '[' exp ']' OPERATOR_ATTR . exp
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 108
+
+
+state 105
+
+   30 cmd: KW_IF '(' exp ')' KW_THEN cmd .
+   31    | KW_IF '(' exp ')' KW_THEN cmd . KW_ELSE cmd
+
+    KW_ELSE  shift, and go to state 109
+
+    KW_ELSE   [reduce using rule 30 (cmd)]
+    $default  reduce using rule 30 (cmd)
+
+
+state 106
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO . exp ')' cmd
+
+    TK_IDENTIFIER  shift, and go to state 10
+    LIT_INTEGER    shift, and go to state 20
+    LIT_FALSE      shift, and go to state 49
+    LIT_TRUE       shift, and go to state 50
+    LIT_CHAR       shift, and go to state 51
+    '('            shift, and go to state 52
+
+    integer     go to state 53
+    identifier  go to state 54
+    exp         go to state 110
+
+
+state 107
+
+   65 argument_list_non_empty: exp ',' argument_list .
+
+    $default  reduce using rule 65 (argument_list_non_empty)
+
+
+state 108
+
+   29 cmd: identifier '[' exp ']' OPERATOR_ATTR exp .
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+
+    $default  reduce using rule 29 (cmd)
+
+    operator  go to state 82
+
+
+state 109
+
+   31 cmd: KW_IF '(' exp ')' KW_THEN cmd KW_ELSE . cmd
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 111
+    cmdblock    go to state 43
+
+
+state 110
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp . ')' cmd
+   58 exp: exp . operator exp
+
+    OPERATOR_LE   shift, and go to state 70
+    OPERATOR_GE   shift, and go to state 71
+    OPERATOR_EQ   shift, and go to state 72
+    OPERATOR_NE   shift, and go to state 73
+    OPERATOR_AND  shift, and go to state 74
+    OPERATOR_OR   shift, and go to state 75
+    OPERATOR_L    shift, and go to state 76
+    OPERATOR_G    shift, and go to state 77
+    OPERATOR_MUL  shift, and go to state 78
+    OPERATOR_DIV  shift, and go to state 79
+    OPERATOR_SUB  shift, and go to state 80
+    OPERATOR_ADD  shift, and go to state 81
+    ')'           shift, and go to state 112
+
+    operator  go to state 82
+
+
+state 111
+
+   31 cmd: KW_IF '(' exp ')' KW_THEN cmd KW_ELSE cmd .
+
+    $default  reduce using rule 31 (cmd)
+
+
+state 112
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' . cmd
+
+    KW_IF          shift, and go to state 35
+    KW_FOR         shift, and go to state 36
+    KW_READ        shift, and go to state 37
+    KW_RETURN      shift, and go to state 38
+    KW_PRINT       shift, and go to state 39
+    TK_IDENTIFIER  shift, and go to state 10
+    '{'            shift, and go to state 31
+
+    $default  reduce using rule 34 (cmd)
+
+    identifier  go to state 40
+    cmd         go to state 113
+    cmdblock    go to state 43
+
+
+state 113
+
+   33 cmd: KW_FOR '(' identifier OPERATOR_ATTR exp KW_TO exp ')' cmd .
+
+    $default  reduce using rule 33 (cmd)

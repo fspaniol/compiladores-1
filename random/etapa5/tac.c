@@ -309,10 +309,6 @@ TAC* gen_tac(TREENODE *node) {
                                          tac_join(children_tac[1],
                                                   tac_join(tac_create(TAC_JUMP,labelAux,0,0),
                                                            tac_create(TAC_LABEL,tempAux,0,0)))));
-
-        case TREE_EXP_VEC_INDEX:
-            return tac_join(children_tac[0],children_tac[1]);
-            
         case TREE_CMD_FOR_TO:
             labelAux = make_label();
             tempAux = make_label();
@@ -326,6 +322,12 @@ TAC* gen_tac(TREENODE *node) {
 
 
             break;
+
+
+
+
+
+
 
         /*Function calls */
         case TREE_EXP_FUNC_CALL:

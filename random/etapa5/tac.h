@@ -51,7 +51,6 @@
 #define TAC_ENDFUNC 36
 
 #define TAC_TO_VEC_MOVE 37
-#define TAC_VEC_INDEX 38
 
 
 
