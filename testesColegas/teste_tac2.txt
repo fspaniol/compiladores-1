@@ -1,8 +1,0 @@
-bool b : TRUE;
-int a : 0;
-
-int main ()
-{
-    if (b) then print a;
-    if (b == FALSE) then print a else print "haha";
-};
