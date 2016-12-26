@@ -1,4 +1,4 @@
-int a : 0;
+float a : 0;
 float x : 1;
 char c : 'a';
 

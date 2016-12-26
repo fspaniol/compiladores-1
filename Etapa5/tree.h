@@ -60,7 +60,7 @@
 #define TREE_CMD_EMPTY 55
 
 //expressions
-#define TREE_EXP_VEC_INDEX 49 
+#define TREE_EXP_VEC_INDEX 49
 #define TREE_EXP_OP_BINARY 50
 #define TREE_EXP_BRACKET_ENCLOSURE 51
 #define TREE_EXP_FUNC_CALL 52
